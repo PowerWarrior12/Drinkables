@@ -2,41 +2,33 @@ package com.example.drinkables.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.FrameLayout
 import androidx.activity.viewModels
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentFactory
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import com.example.drinkables.R
 import com.github.terrakok.cicerone.androidx.AppNavigator
-import com.github.terrakok.cicerone.androidx.FragmentScreen
-import java.lang.RuntimeException
-import java.util.*
-
-private const val LIST_FRAGMENT = 1
-private const val DETAILS_FRAGMENT = 2
 
 class MainActivity : AppCompatActivity() {
-    private val navigator = AppNavigator(this, R.id.frame_layout, supportFragmentManager)
+    private val navigator = AppNavigator(this, R.id.container, supportFragmentManager)
     private val viewModel : MainActivityViewModel by viewModels()
+
+    private val currentFragment
+        get() = supportFragmentManager.findFragmentById(R.id.container)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        viewModel.navigationHolder.setNavigator(navigator)
-        if (supportFragmentManager.findFragmentById(R.id.frame_layout) == null){
+        //Open fragment if container is empty
+        if (currentFragment == null){
             viewModel.openListFragment()
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.navigationHolder.setNavigator(navigator)
+    }
+
     override fun onPause() {
-        super.onPause()
         viewModel.navigationHolder.removeNavigator()
+        super.onPause()
     }
 }
