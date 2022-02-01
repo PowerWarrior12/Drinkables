@@ -14,8 +14,8 @@ class DrinksApplication : Application() {
         INSTANCE = this
     }
 
-    companion object{
-        lateinit var INSTANCE : DrinksApplication
+    companion object {
+        lateinit var INSTANCE: DrinksApplication
             private set
     }
 }

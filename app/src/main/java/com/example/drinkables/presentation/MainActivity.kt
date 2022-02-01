@@ -8,7 +8,7 @@ import com.github.terrakok.cicerone.androidx.AppNavigator
 
 class MainActivity : AppCompatActivity() {
     private val navigator = AppNavigator(this, R.id.container, supportFragmentManager)
-    private val viewModel : MainActivityViewModel by viewModels()
+    private val viewModel: MainActivityViewModel by viewModels()
 
     private val currentFragment
         get() = supportFragmentManager.findFragmentById(R.id.container)
@@ -17,18 +17,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         //Open fragment if container is empty
-        if (currentFragment == null){
+        if (currentFragment == null) {
             viewModel.openListFragment()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.navigationHolder.setNavigator(navigator)
+        DrinksApplication.INSTANCE.navigatorHolder.setNavigator(navigator)
     }
 
     override fun onPause() {
-        viewModel.navigationHolder.removeNavigator()
+        DrinksApplication.INSTANCE.navigatorHolder.removeNavigator()
         super.onPause()
     }
 }
