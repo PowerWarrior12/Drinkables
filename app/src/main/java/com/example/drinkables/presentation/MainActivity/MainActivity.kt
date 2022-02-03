@@ -1,9 +1,10 @@
-package com.example.drinkables.presentation
+package com.example.drinkables.presentation.MainActivity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.example.drinkables.R
+import com.example.drinkables.presentation.DrinksApplication
 import com.github.terrakok.cicerone.androidx.AppNavigator
 
 class MainActivity : AppCompatActivity() {

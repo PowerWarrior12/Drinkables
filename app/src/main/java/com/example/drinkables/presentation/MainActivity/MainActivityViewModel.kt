@@ -1,6 +1,8 @@
-package com.example.drinkables.presentation
+package com.example.drinkables.presentation.MainActivity
 
 import androidx.lifecycle.ViewModel
+import com.example.drinkables.presentation.DrinksApplication
+import com.example.drinkables.presentation.Screens
 
 class MainActivityViewModel : ViewModel() {
     private val router = DrinksApplication.INSTANCE.router
@@ -10,6 +12,6 @@ class MainActivityViewModel : ViewModel() {
     }
 
     fun openListFragment() {
-        //TODO Create transaction to window a list of drinks
+        router.navigateTo(Screens.DrinksListFragmentInstance)
     }
 }
