@@ -1,5 +1,6 @@
 package com.example.drinkables.domain.common
 
+import org.jetbrains.annotations.NotNull
 import java.lang.Exception
 
 sealed class Result<out R>{

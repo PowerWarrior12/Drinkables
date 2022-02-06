@@ -7,15 +7,15 @@ import com.example.drinkables.domain.entities.DrinkViewEntity
 import com.example.drinkables.domain.common.Result
 import javax.inject.Inject
 
-const val ERROR_MESSAGE = "Error of loading"
+private const val ERROR_MESSAGE = "Error of loading"
 
-class DrinkRepository @Inject constructor(
-    private val service: DrinksApi,
+class DrinksRepositoryImpl @Inject constructor(
+    private val drinksApi: DrinksApi,
     private val mapper: IEntityMapper<DrinksApiResponse, DrinkViewEntity>
-) : IDrinksRepository {
+) : DrinksRepository {
     override suspend fun loadDrinks(): Result<MutableList<DrinkViewEntity>> {
         try {
-            val response = service.loadDrinks()
+            val response = drinksApi.loadDrinks()
             if (response.isSuccessful) {
                 return Result.Success(response.body()!!.map {
                     mapper.mapEntity(it)

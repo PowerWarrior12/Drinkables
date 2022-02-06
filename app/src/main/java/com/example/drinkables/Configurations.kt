@@ -1,3 +1,3 @@
 package com.example.drinkables
 
-const val url = "https://api.punkapi.com/v2/"
+const val BASE_URL = "https://api.punkapi.com/v2/"

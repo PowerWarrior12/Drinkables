@@ -1,11 +1,10 @@
 package com.example.drinkables.presentation
 
 import android.app.Application
-import com.github.terrakok.cicerone.Cicerone
+import com.example.drinkables.presentation.di.AppComponent
+import com.example.drinkables.presentation.di.DaggerAppComponent
 
 class DrinksApplication : Application() {
-
-    private val cicerone = Cicerone.create()
 
     private var _appComponent: AppComponent? = null
 
@@ -13,9 +12,6 @@ class DrinksApplication : Application() {
         get() = checkNotNull(_appComponent) {
             "AppComponent isn't initialized"
         }
-
-    val router get() = cicerone.router
-    val navigatorHolder get() = cicerone.getNavigatorHolder()
 
     override fun onCreate() {
         super.onCreate()

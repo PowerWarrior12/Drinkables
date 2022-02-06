@@ -23,7 +23,7 @@ class RetrofitService {
     private fun getClient() = OkHttpClient.Builder()
         .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
         .addInterceptor(HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY// чтобы в логах отображалось
+            level = HttpLoggingInterceptor.Level.BODY // чтобы в логах отображалось
         })
         .addInterceptor(Interceptor { chain ->
             val builder = chain.request().newBuilder()
