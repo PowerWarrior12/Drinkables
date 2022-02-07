@@ -7,10 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.drinkables.R
 import com.example.drinkables.databinding.FragmentDrinksListBinding
 import com.example.drinkables.presentation.DrinksApplication
 import javax.inject.Inject
@@ -28,13 +26,12 @@ class DrinksListFragment : Fragment() {
         drinksListViewModelFactory
     }
 
-    private val drinksAdapter =
-        DrinksAdapter(object : DrinkViewHolder.DrinkViewListener {
-            override fun onHeartButtonClick() {
-                //TODO Create logic for click on heart button
-            }
-        })
-    private val drinksListBinding by lazy {
+    private val drinksAdapter = DrinksAdapter(object : DrinkViewHolder.DrinkViewListener {
+        override fun onHeartButtonClick() {
+            //TODO Create logic for click on heart button
+        }
+    })
+    private val binding by lazy {
         FragmentDrinksListBinding.inflate(layoutInflater)
     }
 
@@ -46,16 +43,26 @@ class DrinksListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        return drinksListBinding.root
-    }
-
+    ) = binding.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
 
+        observeData()
+    }
+
+    private fun initViews() {
+        binding.drinksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.drinksRecyclerView.adapter = drinksAdapter
+
+        binding.errorButton.setOnClickListener {
+            drinksViewModel.getDrinks()
+        }
+    }
+
+    private fun observeData() {
         drinksViewModel.drinksListLiveData.observe(
             viewLifecycleOwner, { list ->
                 drinksAdapter.submitList(list)
@@ -63,28 +70,16 @@ class DrinksListFragment : Fragment() {
         )
 
         drinksViewModel.loadingLivaData.observe(
-            viewLifecycleOwner, {
-                when (it) {
-                    true -> drinksListBinding.progressBar.visibility = View.VISIBLE
-                    false -> drinksListBinding.progressBar.visibility = View.GONE
-                }
+            viewLifecycleOwner, { isLoading ->
+                binding.progressBar.isVisible = isLoading
             }
         )
 
         drinksViewModel.errorLiveData.observe(
             viewLifecycleOwner, { isError ->
-                drinksListBinding.errorButton.isVisible = isError
+                binding.errorButton.isVisible = isError
             }
         )
-    }
-
-    private fun initViews() {
-        drinksListBinding.drinksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        drinksListBinding.drinksRecyclerView.adapter = drinksAdapter
-
-        drinksListBinding.errorButton.setOnClickListener {
-            drinksViewModel.getDrinks()
-        }
     }
 
     companion object {

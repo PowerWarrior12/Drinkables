@@ -5,7 +5,7 @@ import com.example.drinkables.domain.entities.DrinkViewEntity
 import javax.inject.Inject
 
 class DrinkViewEntityMapper @Inject constructor() :
-    IEntityMapper<DrinksApiResponse, DrinkViewEntity> {
+    EntityMapper<DrinksApiResponse, DrinkViewEntity> {
     override fun mapEntity(entityFrom: DrinksApiResponse): DrinkViewEntity {
         return DrinkViewEntity(
             id = entityFrom.id,
