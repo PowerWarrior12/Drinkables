@@ -4,11 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.drinkables.domain.common.Result
 import com.example.drinkables.domain.entities.DrinkViewEntity
 import com.example.drinkables.domain.interactors.LoadDrinksInteractor
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.example.drinkables.domain.common.Result as Result
 
 class DrinksListViewModel(
     private val loadDrinksInteractor: LoadDrinksInteractor
@@ -26,7 +26,9 @@ class DrinksListViewModel(
         viewModelScope.launch {
             loadingLivaData.postValue(true)
             errorLiveData.postValue(false)
-            when (val result = loadDrinksInteractor.run()) {
+            // variable for getting the result of a data request for a list of drinks
+            val result = loadDrinksInteractor.run()
+            when (result) {
                 is Result.Success -> {
                     drinksListLiveData.postValue(result.data ?: mutableListOf())
                 }
