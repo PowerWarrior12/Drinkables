@@ -14,10 +14,6 @@ class MainActivityViewModel : ViewModel() {
         DrinksApplication.INSTANCE.appComponent.inject(this)
     }
 
-    fun openDetailsFragment() {
-        //TODO Create transaction to details window
-    }
-
     fun openListFragment() {
         router.navigateTo(Screens.drinksListFragment())
     }

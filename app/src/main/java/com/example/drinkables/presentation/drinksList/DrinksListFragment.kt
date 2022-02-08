@@ -27,8 +27,12 @@ class DrinksListFragment : Fragment() {
     }
 
     private val drinksAdapter = DrinksAdapter(object : DrinkViewHolder.DrinkViewListener {
-        override fun onHeartButtonClick() {
-            //TODO Create logic for click on heart button
+        override fun onHeartButtonClick(id: Int) {
+            //TODO Implements logic on button click
+        }
+
+        override fun onCurrentDrinkClick(id: Int) {
+            drinksViewModel.openDetailedWindow(id)
         }
     })
     private val binding by lazy {

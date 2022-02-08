@@ -5,4 +5,5 @@ import com.example.drinkables.domain.common.Result
 
 interface DrinksRepository {
     suspend fun loadDrinks(): Result<MutableList<DrinkViewEntity>>
+    suspend fun loadDrinkDetailed(id: Int): Result<DrinkViewEntity>
 }

@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.drinkables.domain.entities.DrinkViewEntity
 import com.example.drinkables.domain.interactors.LoadDrinksInteractor
+import com.example.drinkables.presentation.DrinksApplication
+import com.example.drinkables.presentation.Screens
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.example.drinkables.domain.common.Result as Result
@@ -13,12 +16,14 @@ import com.example.drinkables.domain.common.Result as Result
 class DrinksListViewModel(
     private val loadDrinksInteractor: LoadDrinksInteractor
 ) : ViewModel() {
-
+    @Inject
+    lateinit var router: Router
     val drinksListLiveData = MutableLiveData<MutableList<DrinkViewEntity>>()
     val loadingLivaData = MutableLiveData<Boolean>(false)
     val errorLiveData = MutableLiveData<Boolean>(false)
 
     init {
+        DrinksApplication.INSTANCE.appComponent.inject(this)
         getDrinks()
     }
 
@@ -38,6 +43,10 @@ class DrinksListViewModel(
             }
             loadingLivaData.postValue(false)
         }
+    }
+
+    fun openDetailedWindow(id: Int) {
+        router.navigateTo(Screens.drinkDetailedFragment(id))
     }
 
     class DrinksListViewModelFactory @Inject constructor(
