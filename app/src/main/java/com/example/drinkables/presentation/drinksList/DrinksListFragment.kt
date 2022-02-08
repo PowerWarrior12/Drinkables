@@ -65,23 +65,19 @@ class DrinksListFragment : Fragment() {
     }
 
     private fun observeData() {
-        drinksViewModel.drinksListLiveData.observe(
-            viewLifecycleOwner, { list ->
-                drinksAdapter.submitList(list)
-            }
-        )
+        drinksViewModel.drinksListLiveData.observe(viewLifecycleOwner) { list ->
+            drinksAdapter.submitList(list)
+        }
 
-        drinksViewModel.loadingLivaData.observe(
-            viewLifecycleOwner, { isLoading ->
-                binding.progressBar.isVisible = isLoading
-            }
-        )
+        drinksViewModel.loadingLivaData.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.isVisible = isLoading
+        }
 
-        drinksViewModel.errorLiveData.observe(
-            viewLifecycleOwner, { isError ->
-                binding.errorButton.isVisible = isError
-            }
-        )
+
+        drinksViewModel.errorLiveData.observe(viewLifecycleOwner) { isError ->
+            binding.errorButton.isVisible = isError
+        }
+
     }
 
     companion object {

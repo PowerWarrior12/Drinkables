@@ -2,10 +2,10 @@ package com.example.drinkables.presentation.drinksList
 
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
-import com.example.drinkables.domain.entities.DrinkViewEntity
+import com.example.drinkables.domain.entities.Drink
 
 class DrinkItemViewModel : BaseObservable() {
-    var drinkViewEntity: DrinkViewEntity? = null
+    var drink: Drink? = null
         set(value) {
             field = value
             notifyChange()
@@ -13,5 +13,5 @@ class DrinkItemViewModel : BaseObservable() {
 
     @get : Bindable
     val drinkTitle: String
-        get() = drinkViewEntity?.title ?: ""
+        get() = drink?.title ?: ""
 }

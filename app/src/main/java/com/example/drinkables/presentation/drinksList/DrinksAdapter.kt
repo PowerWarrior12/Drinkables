@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.example.drinkables.R
-import com.example.drinkables.domain.entities.DrinkViewEntity
+import com.example.drinkables.domain.entities.Drink
 
 class DrinksAdapter(private val drinkViewListener: DrinkViewHolder.DrinkViewListener) :
-    ListAdapter<DrinkViewEntity, DrinkViewHolder>(DrinkItemCallback) {
+    ListAdapter<Drink, DrinkViewHolder>(DrinkItemCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DrinkViewHolder {
         return DrinkViewHolder(

@@ -2,7 +2,7 @@ package com.example.drinkables.presentation.drinksList
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.drinkables.databinding.DrinkItemBinding
-import com.example.drinkables.domain.entities.DrinkViewEntity
+import com.example.drinkables.domain.entities.Drink
 
 private const val DEFAULT_DRINK_ID = 0
 
@@ -13,17 +13,17 @@ class DrinkViewHolder(private val binding: DrinkItemBinding) :
         binding.viewModel = DrinkItemViewModel()
     }
 
-    fun bind(drinkViewEntity: DrinkViewEntity, callback: DrinkViewListener) {
+    fun bind(drinkViewEntity: Drink, callback: DrinkViewListener) {
         binding.apply {
-            viewModel?.drinkViewEntity = drinkViewEntity
+            viewModel?.drink = drinkViewEntity
             heartButton.setOnClickListener {
                 callback.onHeartButtonClick(
-                    binding.viewModel?.drinkViewEntity?.id ?: DEFAULT_DRINK_ID
+                    binding.viewModel?.drink?.id ?: DEFAULT_DRINK_ID
                 )
             }
             root.setOnClickListener {
                 callback.onCurrentDrinkClick(
-                    binding.viewModel?.drinkViewEntity?.id ?: DEFAULT_DRINK_ID
+                    binding.viewModel?.drink?.id ?: DEFAULT_DRINK_ID
                 )
             }
         }

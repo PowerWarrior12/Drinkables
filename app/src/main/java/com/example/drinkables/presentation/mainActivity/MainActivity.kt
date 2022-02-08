@@ -15,20 +15,25 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
 
+    @Inject
+    lateinit var viewModelFactory: MainActivityViewModel.MainActivityViewModelFactory
+
     private val navigator = AppNavigator(this, R.id.container, supportFragmentManager)
-    private val viewModel: MainActivityViewModel by viewModels()
+    private val viewModel: MainActivityViewModel by viewModels {
+        viewModelFactory
+    }
 
     private val currentFragment
         get() = supportFragmentManager.findFragmentById(R.id.container)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DrinksApplication.INSTANCE.appComponent.inject(this)
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         //Open fragment if container is empty
         if (currentFragment == null) {
             viewModel.openListFragment()
         }
-        DrinksApplication.INSTANCE.appComponent.inject(this)
     }
 
     override fun onResume() {

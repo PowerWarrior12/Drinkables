@@ -1,20 +1,24 @@
 package com.example.drinkables.presentation.mainActivity
 
 import androidx.lifecycle.ViewModel
-import com.example.drinkables.presentation.DrinksApplication
+import androidx.lifecycle.ViewModelProvider
 import com.example.drinkables.presentation.Screens
 import com.github.terrakok.cicerone.Router
 import javax.inject.Inject
 
-class MainActivityViewModel : ViewModel() {
-    @Inject
-    lateinit var router: Router
-
-    init {
-        DrinksApplication.INSTANCE.appComponent.inject(this)
-    }
+class MainActivityViewModel(
+    private val router : Router
+) : ViewModel() {
 
     fun openListFragment() {
         router.navigateTo(Screens.drinksListFragment())
+    }
+
+    class MainActivityViewModelFactory @Inject constructor(
+        private val router : Router
+    ) : ViewModelProvider.NewInstanceFactory(){
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return MainActivityViewModel(router) as T
+        }
     }
 }

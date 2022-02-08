@@ -9,7 +9,7 @@ object Screens {
         DrinksListFragment.newInstance()
     }
 
-    fun drinkDetailedFragment(id: Int) = FragmentScreen {
-        DrinkDetailedFragment.newInstance(id)
+    fun drinkDetailedFragment(drinkId: Int) = FragmentScreen {
+        DrinkDetailedFragment.newInstance(drinkId)
     }
 }

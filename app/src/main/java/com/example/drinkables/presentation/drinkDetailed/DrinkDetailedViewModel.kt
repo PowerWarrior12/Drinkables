@@ -7,17 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.drinkables.domain.interactors.LoadDrinkDetailedInteractor
-import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import com.example.drinkables.domain.common.Result
-import com.example.drinkables.domain.entities.DrinkViewEntity
-import com.example.drinkables.utils.ImageLoader
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.example.drinkables.domain.entities.Drink
+import dagger.assisted.Assisted
 
-private const val DRINK_ID = "drinkId"
 private val TAG = DrinkDetailedViewModel::class.simpleName
 
 class DrinkDetailedViewModel(
@@ -25,7 +21,7 @@ class DrinkDetailedViewModel(
     private val id: Int
 ) : ViewModel() {
 
-    val drinkDetailedLiveData = MutableLiveData<DrinkViewEntity>()
+    val drinkDetailedLiveData = MutableLiveData<Drink>()
     val imageLiveData = MutableLiveData<Bitmap>()
 
     init {
@@ -40,7 +36,7 @@ class DrinkDetailedViewModel(
                     Log.d(TAG, result.exception.message ?: "")
                 }
                 is Result.Success -> {
-                    drinkDetailedLiveData.postValue(result.data ?: DrinkViewEntity())
+                    drinkDetailedLiveData.postValue(result.data ?: Drink())
                     getImage(result.data.imageUrl)
                 }
             }
@@ -48,15 +44,12 @@ class DrinkDetailedViewModel(
     }
 
     private suspend fun getImage(url: String) {
-        withContext(Dispatchers.IO) {
-            val bitmap = ImageLoader.loadImageWithUrl(url)
-            imageLiveData.postValue(bitmap)
-        }
+
     }
 
     class DrinkDetailedViewModelFactory @AssistedInject constructor(
         private val loadDrinkDetailedInteractor: LoadDrinkDetailedInteractor,
-        @Assisted(DRINK_ID) private val id: Int
+        @Assisted private val id: Int
     ) :
         ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -68,7 +61,7 @@ class DrinkDetailedViewModel(
 
         @AssistedFactory
         interface Factory {
-            fun create(@Assisted(DRINK_ID) id: Int): DrinkDetailedViewModel.DrinkDetailedViewModelFactory
+            fun create(@Assisted id: Int): DrinkDetailedViewModel.DrinkDetailedViewModelFactory
         }
     }
 }

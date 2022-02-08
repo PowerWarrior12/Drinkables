@@ -5,9 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.example.drinkables.databinding.FragmentDrinkDetailedBinding
+import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.presentation.DrinksApplication
 import javax.inject.Inject
 
@@ -57,27 +61,33 @@ class DrinkDetailedFragment : Fragment() {
     }
 
     private fun observeData() {
-        drinkViewModel.drinkDetailedLiveData.observe(
-            viewLifecycleOwner, { entity ->
-                binding.apply {
-                    drinkTitleText.text = entity.title
-                    drinkDescriptionText.text = entity.description
-                }
-            }
-        )
-        drinkViewModel.imageLiveData.observe(
-            viewLifecycleOwner, { bitmap ->
-                binding.drinkImage.setImageBitmap(bitmap)
-            }
-        )
+        drinkViewModel.drinkDetailedLiveData.observe(viewLifecycleOwner) { drink ->
+            fillDrinkData(drink)
+        }
+        drinkViewModel.imageLiveData.observe(viewLifecycleOwner) { bitmap ->
+            binding.drinkImage.setImageBitmap(bitmap)
+        }
+    }
+
+    private fun fillDrinkData(drink: Drink) {
+        binding.apply {
+            drinkTitleText.text = drink.title
+            drinkDescriptionText.text = drink.description
+            drinkImage.setImageByUrl(drink.imageUrl)
+        }
+    }
+
+    private fun ImageView.setImageByUrl(url: String) {
+        Glide
+            .with(context)
+            .load(url)
+            .into(this)
     }
 
     companion object {
-        fun newInstance(id: Int): DrinkDetailedFragment {
+        fun newInstance(drinkId: Int): DrinkDetailedFragment {
             return DrinkDetailedFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(DRINK_ID, id)
-                }
+                arguments = bundleOf(DRINK_ID to drinkId)
             }
         }
     }

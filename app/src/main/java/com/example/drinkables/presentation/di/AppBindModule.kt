@@ -1,13 +1,13 @@
 package com.example.drinkables.presentation.di
 
-import com.example.drinkables.data.api.entities.DrinkDetailedApiResponse
-import com.example.drinkables.data.api.entities.DrinksApiResponse
-import com.example.drinkables.data.mappers.DrinkDetailedViewEntityMapper
-import com.example.drinkables.data.mappers.DrinkViewEntityMapper
+import com.example.drinkables.data.api.entities.DrinkResponse
+import com.example.drinkables.data.api.entities.DrinksResponse
+import com.example.drinkables.data.mappers.DrinkDetailedMapper
+import com.example.drinkables.data.mappers.DrinkMapper
 import com.example.drinkables.data.mappers.EntityMapper
 import com.example.drinkables.data.repositories.DrinksRepository
 import com.example.drinkables.data.repositories.DrinksRepositoryImpl
-import com.example.drinkables.domain.entities.DrinkViewEntity
+import com.example.drinkables.domain.entities.Drink
 import dagger.Binds
 import dagger.Module
 
@@ -20,11 +20,11 @@ abstract class AppBindModule {
 
     @Binds
     abstract fun bindDrinkViewEntityMapper(
-        drinksViewEntityMapper: DrinkViewEntityMapper
-    ): EntityMapper<DrinksApiResponse, DrinkViewEntity>
+        drinksViewEntityMapper: DrinkMapper
+    ): EntityMapper<DrinksResponse, Drink>
 
     @Binds
     abstract fun bindDrinkDetailedViewEntityMapper(
-        drinkDetailedViewEntityMapper: DrinkDetailedViewEntityMapper
-    ): EntityMapper<DrinkDetailedApiResponse, DrinkViewEntity>
+        drinkDetailedViewEntityMapper: DrinkDetailedMapper
+    ): EntityMapper<DrinkResponse, Drink>
 }
