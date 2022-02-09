@@ -1,6 +1,5 @@
 package com.example.drinkables.presentation.drinkDetailed
 
-import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,7 +21,6 @@ class DrinkDetailedViewModel(
 ) : ViewModel() {
 
     val drinkDetailedLiveData = MutableLiveData<Drink>()
-    val imageLiveData = MutableLiveData<Bitmap>()
 
     init {
         getDrinkDetailed()
@@ -37,14 +35,9 @@ class DrinkDetailedViewModel(
                 }
                 is Result.Success -> {
                     drinkDetailedLiveData.postValue(result.data ?: Drink())
-                    getImage(result.data.imageUrl)
                 }
             }
         }
-    }
-
-    private suspend fun getImage(url: String) {
-
     }
 
     class DrinkDetailedViewModelFactory @AssistedInject constructor(

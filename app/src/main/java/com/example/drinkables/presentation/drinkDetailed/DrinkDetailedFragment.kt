@@ -64,9 +64,6 @@ class DrinkDetailedFragment : Fragment() {
         drinkViewModel.drinkDetailedLiveData.observe(viewLifecycleOwner) { drink ->
             fillDrinkData(drink)
         }
-        drinkViewModel.imageLiveData.observe(viewLifecycleOwner) { bitmap ->
-            binding.drinkImage.setImageBitmap(bitmap)
-        }
     }
 
     private fun fillDrinkData(drink: Drink) {
