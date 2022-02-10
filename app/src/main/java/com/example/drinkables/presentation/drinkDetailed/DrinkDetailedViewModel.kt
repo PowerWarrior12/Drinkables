@@ -17,7 +17,7 @@ private val TAG = DrinkDetailedViewModel::class.simpleName
 
 class DrinkDetailedViewModel(
     private val loadDrinkDetailedInteractor: LoadDrinkDetailedInteractor,
-    private val id: Int
+    private val drinkId: Int
 ) : ViewModel() {
 
     val drinkDetailedLiveData = MutableLiveData<Drink>()
@@ -28,13 +28,15 @@ class DrinkDetailedViewModel(
 
     fun getDrinkDetailed() {
         viewModelScope.launch {
-            val result = loadDrinkDetailedInteractor.run(id)
+            val result = loadDrinkDetailedInteractor.run(drinkId)
             when (result) {
                 is Result.Error -> {
                     Log.d(TAG, result.exception.message ?: "")
                 }
                 is Result.Success -> {
-                    drinkDetailedLiveData.postValue(result.data ?: Drink())
+                    result.data.let {
+                        drinkDetailedLiveData.postValue(it)
+                    }
                 }
             }
         }
@@ -42,19 +44,19 @@ class DrinkDetailedViewModel(
 
     class DrinkDetailedViewModelFactory @AssistedInject constructor(
         private val loadDrinkDetailedInteractor: LoadDrinkDetailedInteractor,
-        @Assisted private val id: Int
+        @Assisted private val drinkId: Int
     ) :
         ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return DrinkDetailedViewModel(
                 loadDrinkDetailedInteractor,
-                id
+                drinkId
             ) as T
         }
 
         @AssistedFactory
         interface Factory {
-            fun create(@Assisted id: Int): DrinkDetailedViewModel.DrinkDetailedViewModelFactory
+            fun create(@Assisted drinkId: Int): DrinkDetailedViewModel.DrinkDetailedViewModelFactory
         }
     }
 }

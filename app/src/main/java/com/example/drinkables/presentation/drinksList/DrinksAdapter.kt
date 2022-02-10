@@ -2,7 +2,6 @@ package com.example.drinkables.presentation.drinksList
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.example.drinkables.R
 import com.example.drinkables.domain.entities.Drink
@@ -12,12 +11,7 @@ class DrinksAdapter(private val drinkViewListener: DrinkViewHolder.DrinkViewList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DrinkViewHolder {
         return DrinkViewHolder(
-            DataBindingUtil.inflate(
-                LayoutInflater.from(parent.context),
-                R.layout.drink_item,
-                parent,
-                false
-            )
+            LayoutInflater.from(parent.context).inflate(R.layout.drink_item, parent, false)
         )
     }
 

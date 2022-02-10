@@ -8,7 +8,7 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class ScreenAppModule {
+class NavigationModule {
     @Provides
     @Singleton
     fun provideCicerone(): Cicerone<Router> {

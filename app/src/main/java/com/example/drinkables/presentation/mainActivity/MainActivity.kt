@@ -3,15 +3,13 @@ package com.example.drinkables.presentation.mainActivity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.databinding.DataBindingUtil
 import com.example.drinkables.R
-import com.example.drinkables.databinding.ActivityMainBinding
 import com.example.drinkables.presentation.DrinksApplication
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
 
@@ -29,7 +27,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DrinksApplication.INSTANCE.appComponent.inject(this)
-        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         //Open fragment if container is empty
         if (currentFragment == null) {
             viewModel.openListFragment()

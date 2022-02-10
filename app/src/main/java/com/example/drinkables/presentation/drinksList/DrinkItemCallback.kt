@@ -8,10 +8,7 @@ object DrinkItemCallback : DiffUtil.ItemCallback<Drink>() {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(
-        oldItem: Drink,
-        newItem: Drink
-    ): Boolean {
+    override fun areContentsTheSame(oldItem: Drink, newItem: Drink): Boolean {
         return oldItem == newItem
     }
 }
