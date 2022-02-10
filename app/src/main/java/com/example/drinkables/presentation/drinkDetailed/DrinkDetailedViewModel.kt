@@ -34,9 +34,7 @@ class DrinkDetailedViewModel(
                     Log.d(TAG, result.exception.message ?: "")
                 }
                 is Result.Success -> {
-                    result.data.let {
-                        drinkDetailedLiveData.postValue(it)
-                    }
+                    result.data.let(drinkDetailedLiveData::postValue)
                 }
             }
         }

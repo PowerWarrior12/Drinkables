@@ -6,10 +6,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.drinkables.databinding.DrinkItemBinding
 import com.example.drinkables.domain.entities.Drink
 
-private const val DEFAULT_DRINK_ID = 0
-
-class DrinkViewHolder(view: View) :
-    RecyclerView.ViewHolder(view) {
+class DrinkViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private var drink: Drink? = null
 
@@ -18,16 +15,18 @@ class DrinkViewHolder(view: View) :
     fun bind(drinkViewEntity: Drink, callback: DrinkViewListener) {
         binding.apply {
             drink = drinkViewEntity
-            drinkTitleText.text = drink?.title
-            heartButton.setOnClickListener {
-                callback.onHeartButtonClick(
-                    drink?.id ?: DEFAULT_DRINK_ID
-                )
-            }
-            root.setOnClickListener {
-                callback.onCurrentDrinkClick(
-                    drink?.id ?: DEFAULT_DRINK_ID
-                )
+            drink?.let { drink ->
+                drinkTitleText.text = drink.title
+                heartButton.setOnClickListener {
+                    callback.onHeartButtonClick(
+                        drink.id
+                    )
+                }
+                root.setOnClickListener {
+                    callback.onCurrentDrinkClick(
+                        drink.id
+                    )
+                }
             }
         }
     }
