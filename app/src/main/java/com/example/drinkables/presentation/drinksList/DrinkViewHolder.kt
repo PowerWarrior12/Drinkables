@@ -18,14 +18,10 @@ class DrinkViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             drink?.let { drink ->
                 drinkTitleText.text = drink.title
                 heartButton.setOnClickListener {
-                    callback.onHeartButtonClick(
-                        drink.id
-                    )
+                    callback.onHeartButtonClick(drink.id)
                 }
                 root.setOnClickListener {
-                    callback.onCurrentDrinkClick(
-                        drink.id
-                    )
+                    callback.onCurrentDrinkClick(drink.id)
                 }
             }
         }
