@@ -28,13 +28,17 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
 
     private val drinksAdapter = DrinksAdapter(object : DrinkViewHolder.DrinkViewListener {
         override fun onHeartButtonClick(id: Int) {
-            //TODO Implements logic on button click
+            drinksViewModel.changeFavouriteDrink(id)
         }
 
         override fun onCurrentDrinkClick(id: Int) {
             drinksViewModel.openDetailedWindow(id)
         }
     })
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
     private val binding by viewBinding(FragmentDrinksListBinding::bind)
 
     override fun onAttach(context: Context) {
@@ -46,6 +50,7 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         observeData()
+        drinksViewModel.updateDrinksFavourites()
     }
 
     private fun initViews() {

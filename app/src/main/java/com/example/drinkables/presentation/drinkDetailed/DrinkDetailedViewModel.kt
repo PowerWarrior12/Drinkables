@@ -11,12 +11,16 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import com.example.drinkables.domain.common.Result
 import com.example.drinkables.domain.entities.Drink
+import com.example.drinkables.domain.interactors.ChangeFavouriteDrinkInteractor
+import com.example.drinkables.domain.interactors.UpdateDrinkFavouriteInteractor
 import dagger.assisted.Assisted
 
 private val TAG = DrinkDetailedViewModel::class.simpleName
 
 class DrinkDetailedViewModel(
     private val loadDrinkDetailedInteractor: LoadDrinkDetailedInteractor,
+    private val changeFavouriteDrinkInteractor: ChangeFavouriteDrinkInteractor,
+    private val updateDrinkFavouriteInteractor: UpdateDrinkFavouriteInteractor,
     private val drinkId: Int
 ) : ViewModel() {
 
@@ -28,26 +32,40 @@ class DrinkDetailedViewModel(
 
     fun getDrinkDetailed() {
         viewModelScope.launch {
-            val result = loadDrinkDetailedInteractor.run(drinkId)
+            val result = loadDrinkDetailedInteractor.run(drinkId, viewModelScope)
             when (result) {
                 is Result.Error -> {
                     Log.d(TAG, result.exception.message ?: "")
                 }
                 is Result.Success -> {
-                    result.data.let(drinkDetailedLiveData::postValue)
+                    result.data.let { drink ->
+                        drinkDetailedLiveData.postValue(updateDrinkFavouriteInteractor.run(drink))
+                    }
                 }
+            }
+        }
+    }
+
+    fun changeFavouriteDrink() {
+        viewModelScope.launch {
+            drinkDetailedLiveData.value?.let { drink ->
+                drinkDetailedLiveData.postValue(changeFavouriteDrinkInteractor.run(drink))
             }
         }
     }
 
     class DrinkDetailedViewModelFactory @AssistedInject constructor(
         private val loadDrinkDetailedInteractor: LoadDrinkDetailedInteractor,
+        private val changeFavouriteDrinkInteractor: ChangeFavouriteDrinkInteractor,
+        private val updateDrinkFavouriteInteractor: UpdateDrinkFavouriteInteractor,
         @Assisted private val drinkId: Int
     ) :
         ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return DrinkDetailedViewModel(
                 loadDrinkDetailedInteractor,
+                changeFavouriteDrinkInteractor,
+                updateDrinkFavouriteInteractor,
                 drinkId
             ) as T
         }

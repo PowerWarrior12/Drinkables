@@ -42,13 +42,14 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
     private fun initViews() {
         binding.apply {
             heartButton.setOnClickListener {
-                //TODO Implement logic on button click
+                drinkViewModel.changeFavouriteDrink()
             }
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViews()
         observeData()
     }
 
@@ -59,8 +60,18 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
     private fun fillDrinkData(drink: Drink) {
         binding.apply {
             drinkTitleText.text = drink.title
+            setHeartButtonBackground(drink)
             drinkDescriptionText.text = drink.description
             drinkImage.setImageByUrl(drink.imageUrl)
+        }
+    }
+
+    private fun setHeartButtonBackground(drink : Drink){
+        binding.heartButton.apply {
+            when (drink.favourites) {
+                true -> setBackgroundResource(R.drawable.ic_heart_favourite)
+                false -> setBackgroundResource(R.drawable.ic_heart)
+            }
         }
     }
 

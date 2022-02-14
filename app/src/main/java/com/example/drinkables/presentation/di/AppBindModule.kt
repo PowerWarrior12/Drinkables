@@ -7,6 +7,7 @@ import com.example.drinkables.data.mappers.DrinkMapper
 import com.example.drinkables.data.mappers.EntityMapper
 import com.example.drinkables.data.repositories.DrinksRepository
 import com.example.drinkables.data.repositories.DrinksRepositoryImpl
+import com.example.drinkables.data.repositories.FavouriteDrinksRepository
 import com.example.drinkables.domain.entities.Drink
 import dagger.Binds
 import dagger.Module
@@ -17,6 +18,11 @@ abstract class AppBindModule {
     abstract fun bindDrinkRepository(
         drinksRepository: DrinksRepositoryImpl
     ): DrinksRepository
+
+    @Binds
+    abstract fun bindFavouriteDrinkRepository(
+        drinksRepository: DrinksRepositoryImpl
+    ): FavouriteDrinksRepository
 
     @Binds
     abstract fun bindDrinkViewEntityMapper(
