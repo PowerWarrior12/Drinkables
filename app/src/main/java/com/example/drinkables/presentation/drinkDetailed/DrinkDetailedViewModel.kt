@@ -32,14 +32,15 @@ class DrinkDetailedViewModel(
 
     fun getDrinkDetailed() {
         viewModelScope.launch {
-            val result = loadDrinkDetailedInteractor.run(drinkId, viewModelScope)
+            val result = loadDrinkDetailedInteractor.run(drinkId)
             when (result) {
                 is Result.Error -> {
                     Log.d(TAG, result.exception.message ?: "")
                 }
                 is Result.Success -> {
                     result.data.let { drink ->
-                        drinkDetailedLiveData.postValue(updateDrinkFavouriteInteractor.run(drink))
+                        val updateDrink = updateDrinkFavouriteInteractor.run(drink)
+                        drinkDetailedLiveData.postValue(updateDrink)
                     }
                 }
             }

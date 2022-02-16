@@ -8,10 +8,10 @@ import javax.inject.Inject
 class UpdateDrinksFavouritesInteractor @Inject constructor(
     private val favouriteDrinksRepository: FavouriteDrinksRepository
 ) {
-    suspend fun run(drinks : MutableList<Drink>) : MutableList<Drink>{
-        val favourites = favouriteDrinksRepository.getFavouritesDrinksId()
+    suspend fun run(drinks: MutableList<Drink>): MutableList<Drink> {
+        val favourites = favouriteDrinksRepository.getFavouritesDrinkids()
         drinks.forEach { drink ->
-            drink.favourites = favourites.contains(drink.id)
+            drinks[drinks.indexOf(drink)] = drink.copy(favourites = favourites.contains(drink.id))
         }
         return drinks
     }

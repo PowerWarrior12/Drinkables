@@ -39,7 +39,8 @@ class DrinksListViewModel(
             when (result) {
                 is Result.Success -> {
                     result.data.let { drinks ->
-                        drinksListLiveData.postValue(updateDrinksFavouritesInteractor.run(drinks))
+                        val updatedDrinks = updateDrinksFavouritesInteractor.run(drinks)
+                        drinksListLiveData.postValue(updatedDrinks)
                     }
                 }
                 is Result.Error -> {

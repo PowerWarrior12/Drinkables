@@ -45,17 +45,14 @@ class DrinksRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getFavouritesDrinksId(): List<Int> {
+    override suspend fun getFavouritesDrinkids(): List<Int> {
         return drinkDB.drinkDao().getFavouriteDrinks().map { drink ->
             drink.id
         }
     }
 
     override suspend fun checkFavouriteDrink(drinkId: Int): Boolean {
-        drinkDB.drinkDao().getFavouriteDrink(drinkId)?.let {
-            return true
-        }
-        return false
+        return drinkDB.drinkDao().getFavouriteDrink(drinkId) != null
     }
 
     override suspend fun addFavouriteDrink(drinkId: Int) {

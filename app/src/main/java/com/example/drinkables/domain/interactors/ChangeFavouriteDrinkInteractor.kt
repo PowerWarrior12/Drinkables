@@ -9,18 +9,19 @@ class ChangeFavouriteDrinkInteractor @Inject constructor(
 ) {
     suspend fun run(drinkId: Int, drinks: MutableList<Drink>): MutableList<Drink> {
         updateFavouriteInStorage(drinkId)
-        drinks.find { drink ->
+        val currentDrink = drinks.find { drink ->
             drink.id == drinkId
-        }?.let { drink ->
-            drink.favourites = !drink.favourites
+        }
+        if (currentDrink != null) {
+            drinks[drinks.indexOf(currentDrink)] =
+                currentDrink.copy(favourites = !currentDrink.favourites)
         }
         return drinks
     }
 
     suspend fun run(drink: Drink): Drink {
         updateFavouriteInStorage(drink.id)
-        drink.favourites = !drink.favourites
-        return drink
+        return drink.copy(favourites = !drink.favourites)
     }
 
     private suspend fun updateFavouriteInStorage(drinkId: Int) {

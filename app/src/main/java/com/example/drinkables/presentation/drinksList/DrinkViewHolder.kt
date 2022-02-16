@@ -19,10 +19,8 @@ class DrinkViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             drink?.let { drink ->
                 drinkTitleText.text = drink.title
                 setHeartButtonBackground(drink)
-                heartButton.apply {
-                    setOnClickListener {
-                        callback.onHeartButtonClick(drink.id)
-                    }
+                heartButton.setOnClickListener {
+                    callback.onHeartButtonClick(drink.id)
                 }
                 root.setOnClickListener {
                     callback.onCurrentDrinkClick(drink.id)
@@ -31,11 +29,12 @@ class DrinkViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    private fun setHeartButtonBackground(drink : Drink){
+    private fun setHeartButtonBackground(drink: Drink) {
         binding.heartButton.apply {
-            when (drink.favourites) {
-                true -> setBackgroundResource(R.drawable.ic_heart_favourite)
-                false -> setBackgroundResource(R.drawable.ic_heart)
+            if (drink.favourites) {
+                setBackgroundResource(R.drawable.ic_heart_favourite)
+            } else {
+                setBackgroundResource(R.drawable.ic_heart)
             }
         }
     }
