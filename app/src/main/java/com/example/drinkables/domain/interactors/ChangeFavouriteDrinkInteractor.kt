@@ -13,7 +13,8 @@ class ChangeFavouriteDrinkInteractor @Inject constructor(
             drink.id == drinkId
         }
         if (currentDrink != null) {
-            drinks[drinks.indexOf(currentDrink)] =
+            val drinkIndex = drinks.indexOf(currentDrink)
+            drinks[drinkIndex] =
                 currentDrink.copy(favourites = !currentDrink.favourites)
         }
         return drinks
