@@ -15,6 +15,12 @@ class DrinksAdapter(private val drinkViewListener: DrinkViewHolder.DrinkViewList
         )
     }
 
+    override fun submitList(list: MutableList<Drink>?) {
+        super.submitList(list?.map {
+            it.copy()
+        })
+    }
+
     override fun onBindViewHolder(holder: DrinkViewHolder, position: Int) {
         holder.bind(currentList[position], this.drinkViewListener)
     }
