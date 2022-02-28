@@ -2,7 +2,6 @@ package com.example.drinkables.domain.interactors
 
 import com.example.drinkables.data.repositories.FavouriteDrinksRepository
 import com.example.drinkables.domain.entities.Drink
-import kotlinx.coroutines.async
 import javax.inject.Inject
 
 class UpdateDrinksFavouritesInteractor @Inject constructor(

@@ -21,6 +21,8 @@ class DrinkViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 setHeartButtonBackground(drink)
                 heartButton.setOnClickListener {
                     callback.onHeartButtonClick(drink.id)
+                    drink.favourites = !drink.favourites
+                    setHeartButtonBackground(drink)
                 }
                 root.setOnClickListener {
                     callback.onCurrentDrinkClick(drink.id)

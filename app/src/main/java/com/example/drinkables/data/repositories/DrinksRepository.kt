@@ -1,9 +1,11 @@
 package com.example.drinkables.data.repositories
 
+import androidx.paging.PagingData
 import com.example.drinkables.domain.common.Result
 import com.example.drinkables.domain.entities.Drink
+import kotlinx.coroutines.flow.Flow
 
 interface DrinksRepository {
-    suspend fun loadDrinks(): Result<MutableList<Drink>>
     suspend fun loadDrinkDetailed(id: Int): Result<Drink>
+    fun getPagingDrinks(): Flow<PagingData<Drink>>
 }

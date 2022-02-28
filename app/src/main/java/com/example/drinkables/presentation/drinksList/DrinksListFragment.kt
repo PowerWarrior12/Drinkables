@@ -2,15 +2,21 @@ package com.example.drinkables.presentation.drinksList
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.drinkables.R
 import com.example.drinkables.databinding.FragmentDrinksListBinding
 import com.example.drinkables.presentation.DrinksApplication
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -39,6 +45,7 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
     private val binding by viewBinding(FragmentDrinksListBinding::bind)
 
     override fun onAttach(context: Context) {
@@ -50,20 +57,19 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         observeData()
-        drinksViewModel.updateDrinksFavourites()
     }
 
     private fun initViews() {
         binding.drinksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.drinksRecyclerView.adapter = drinksAdapter
-
-        binding.errorButton.setOnClickListener {
-            drinksViewModel.getDrinks()
-        }
     }
 
     private fun observeData() {
-        drinksViewModel.drinksListLiveData.observe(viewLifecycleOwner, drinksAdapter::submitList)
+        viewLifecycleOwner.lifecycleScope.launch {
+            drinksViewModel.drinksFlow.collect { drinks ->
+                drinksAdapter.submitData(drinks)
+            }
+        }
 
         drinksViewModel.loadingLivaData.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.isVisible = isLoading

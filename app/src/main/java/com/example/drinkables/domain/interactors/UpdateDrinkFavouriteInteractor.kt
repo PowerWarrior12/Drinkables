@@ -8,6 +8,7 @@ class UpdateDrinkFavouriteInteractor @Inject constructor(
     private val favouriteDrinksRepository: FavouriteDrinksRepository
 ) {
     suspend fun run(drink: Drink): Drink {
-        return drink.copy(favourites = favouriteDrinksRepository.checkFavouriteDrink(drink.id))
+        val x = drink.copy(favourites = favouriteDrinksRepository.checkFavouriteDrink(drink.id))
+        return x
     }
 }
