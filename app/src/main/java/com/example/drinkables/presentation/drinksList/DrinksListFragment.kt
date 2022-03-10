@@ -2,20 +2,19 @@ package com.example.drinkables.presentation.drinksList
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.map
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.drinkables.R
 import com.example.drinkables.databinding.FragmentDrinksListBinding
 import com.example.drinkables.presentation.DrinksApplication
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,10 +41,6 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
         }
     })
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     private val binding by viewBinding(FragmentDrinksListBinding::bind)
 
     override fun onAttach(context: Context) {
@@ -61,22 +56,25 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
 
     private fun initViews() {
         binding.drinksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.drinksRecyclerView.adapter = drinksAdapter
+        binding.drinksRecyclerView.adapter = drinksAdapter.withLoadStateHeaderAndFooter(
+            header = DrinkStateAdapter { drinksAdapter.retry() },
+            footer = DrinkStateAdapter { drinksAdapter.retry() }
+        )
+        binding.errorButton.setOnClickListener { drinksAdapter.retry() }
     }
 
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            drinksViewModel.drinksFlow.collect { drinks ->
-                drinksAdapter.submitData(drinks)
+            drinksViewModel.drinksFlow.collectLatest(drinksAdapter::submitData)
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            drinksAdapter.loadStateFlow.collect { loadState ->
+                //Show loading bar
+                binding.progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+                //Show error button
+                binding.errorButton.isVisible = loadState.source.refresh is LoadState.Error
             }
-        }
-
-        drinksViewModel.loadingLivaData.observe(viewLifecycleOwner) { isLoading ->
-            binding.progressBar.isVisible = isLoading
-        }
-
-        drinksViewModel.errorLiveData.observe(viewLifecycleOwner) { isError ->
-            binding.errorButton.isVisible = isError
         }
     }
 

@@ -1,17 +1,16 @@
 package com.example.drinkables.presentation.drinksList
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.interactors.ChangeFavouriteDrinkInteractor
 import com.example.drinkables.domain.interactors.LoadPagingDrinksInteractor
 import com.example.drinkables.presentation.Screens
 import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,9 +19,12 @@ class DrinksListViewModel(
     private val loadPagingDrinksInteractor: LoadPagingDrinksInteractor,
     private val router: Router
 ) : ViewModel() {
-    val loadingLivaData = MutableLiveData<Boolean>(false)
-    val errorLiveData = MutableLiveData<Boolean>(false)
-    val drinksFlow = getPagingDrinks()
+    val drinksFlow: Flow<PagingData<Drink>>
+
+    init {
+        drinksFlow = getPagingDrinks()
+            .cachedIn(viewModelScope)
+    }
 
     private fun getPagingDrinks(): Flow<PagingData<Drink>> {
         return loadPagingDrinksInteractor.run()
@@ -30,7 +32,7 @@ class DrinksListViewModel(
 
     fun changeFavouriteDrink(drinkId: Int) {
         viewModelScope.launch {
-            drinksFlow.collect { changeFavouriteDrinkInteractor.run(drinkId) }
+            changeFavouriteDrinkInteractor.run(drinkId)
         }
     }
 

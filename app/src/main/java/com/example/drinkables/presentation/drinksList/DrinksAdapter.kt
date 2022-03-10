@@ -3,10 +3,8 @@ package com.example.drinkables.presentation.drinksList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.ListAdapter
 import com.example.drinkables.R
 import com.example.drinkables.domain.entities.Drink
-import kotlinx.coroutines.flow.Flow
 
 class DrinksAdapter(private val drinkViewListener: DrinkViewHolder.DrinkViewListener) :
     PagingDataAdapter<Drink, DrinkViewHolder>(DrinkItemCallback) {
