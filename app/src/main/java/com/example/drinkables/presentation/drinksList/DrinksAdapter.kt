@@ -1,6 +1,5 @@
 package com.example.drinkables.presentation.drinksList
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -18,16 +17,5 @@ class DrinksAdapter(private val drinkViewListener: DrinkViewHolder.DrinkViewList
 
     override fun onBindViewHolder(holder: DrinkViewHolder, position: Int) {
         holder.bind(getItem(position) ?: Drink(), this.drinkViewListener)
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateFavouriteDrink(drinkId: Int) {
-        for (i in 0 until itemCount) {
-            val drink = getItem(i)
-            if (drink?.id == drinkId) {
-                drink.favourites = !drink.favourites
-            }
-        }
-        notifyDataSetChanged()
     }
 }

@@ -5,5 +5,5 @@ data class Drink(
     val title: String = "",
     var favourites: Boolean = false,
     val description: String = "",
-    val imageUrl: String? = ""
+    val imageUrl: String = ""
 )

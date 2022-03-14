@@ -5,19 +5,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.example.drinkables.HEARD_BUTTON_SCALE_GROWTH
-import com.example.drinkables.HEART_BUTTON_DURATION
 import com.example.drinkables.R
 import com.example.drinkables.databinding.FragmentDrinkDetailedBinding
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.presentation.DrinksApplication
-import com.example.drinkables.presentation.drinksList.DrinksListFragment
-import com.example.drinkables.utils.setImageByUrl
-import com.example.drinkables.utils.views.startJellyAnimation
 import javax.inject.Inject
+import com.example.drinkables.utils.setImageByUrl
 
 private const val DRINK_ID = "drinkId"
 
@@ -48,10 +43,6 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
         binding.apply {
             heartButton.setOnClickListener {
                 drinkViewModel.changeFavouriteDrink()
-                setFragmentResult(
-                    DrinksListFragment.RESULT_KEY,
-                    bundleOf(DrinksListFragment.DRINK_ID to drinkId))
-                heartButton.startJellyAnimation(HEART_BUTTON_DURATION, HEARD_BUTTON_SCALE_GROWTH)
             }
         }
     }
@@ -71,13 +62,11 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
             drinkTitleText.text = drink.title
             setHeartButtonBackground(drink)
             drinkDescriptionText.text = drink.description
-            drink.imageUrl?.let {
-                drinkImage.setImageByUrl(drink.imageUrl)
-            }
+            drinkImage.setImageByUrl(drink.imageUrl)
         }
     }
 
-    private fun setHeartButtonBackground(drink: Drink) {
+    private fun setHeartButtonBackground(drink : Drink){
         binding.heartButton.apply {
             when (drink.favourites) {
                 true -> setBackgroundResource(R.drawable.ic_heart_favourite)

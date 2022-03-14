@@ -1,16 +1,12 @@
 package com.example.drinkables.presentation.mainActivity
 
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import com.example.drinkables.R
 import com.example.drinkables.presentation.DrinksApplication
-import com.github.terrakok.cicerone.Navigator
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
-import com.github.terrakok.cicerone.androidx.FragmentScreen
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
@@ -20,27 +16,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     @Inject
     lateinit var viewModelFactory: MainActivityViewModel.MainActivityViewModelFactory
 
+    private val navigator = AppNavigator(this, R.id.container, supportFragmentManager)
     private val viewModel: MainActivityViewModel by viewModels {
         viewModelFactory
     }
-
-    private val navigator: Navigator =
-        object : AppNavigator(this, R.id.container, supportFragmentManager) {
-            override fun setupFragmentTransaction(
-                screen: FragmentScreen,
-                fragmentTransaction: FragmentTransaction,
-                currentFragment: Fragment?,
-                nextFragment: Fragment
-            ) {
-                if (currentFragment != null)
-                    fragmentTransaction.setCustomAnimations(
-                        R.anim.slide_in_right,
-                        R.anim.slide_out_left,
-                        R.anim.slide_in_left,
-                        R.anim.slide_out_right
-                    )
-            }
-        }
 
     private val currentFragment
         get() = supportFragmentManager.findFragmentById(R.id.container)
