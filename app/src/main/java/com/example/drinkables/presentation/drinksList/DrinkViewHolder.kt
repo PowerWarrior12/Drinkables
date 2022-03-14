@@ -3,9 +3,13 @@ package com.example.drinkables.presentation.drinksList
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.example.drinkables.HEARD_BUTTON_SCALE_GROWTH
+import com.example.drinkables.HEART_BUTTON_DURATION
 import com.example.drinkables.R
 import com.example.drinkables.databinding.DrinkItemBinding
 import com.example.drinkables.domain.entities.Drink
+import com.example.drinkables.utils.views.startJellyAnimation
+
 
 class DrinkViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -13,13 +17,14 @@ class DrinkViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val binding by viewBinding<DrinkItemBinding>()
 
-    fun bind(drinkViewEntity: Drink, callback: DrinkViewListener) {
+    fun bind(drink_: Drink, callback: DrinkViewListener) {
         binding.apply {
-            drink = drinkViewEntity
+            drink = drink_
             drink?.let { drink ->
                 drinkTitleText.text = drink.title
                 setHeartButtonBackground(drink)
                 heartButton.setOnClickListener {
+                    heartButton.startJellyAnimation(HEART_BUTTON_DURATION, HEARD_BUTTON_SCALE_GROWTH)
                     callback.onHeartButtonClick(drink.id)
                     drink.favourites = !drink.favourites
                     setHeartButtonBackground(drink)
