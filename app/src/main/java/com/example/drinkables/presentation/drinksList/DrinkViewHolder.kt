@@ -17,10 +17,10 @@ class DrinkViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val binding by viewBinding<DrinkItemBinding>()
 
-    fun bind(drink_: Drink, callback: DrinkViewListener) {
+    fun bind(drink: Drink, callback: DrinkViewListener) {
         binding.apply {
-            drink = drink_
-            drink?.let { drink ->
+            this@DrinkViewHolder.drink = drink
+            this@DrinkViewHolder.drink?.let { drink ->
                 drinkTitleText.text = drink.title
                 setHeartButtonBackground(drink)
                 heartButton.setOnClickListener {

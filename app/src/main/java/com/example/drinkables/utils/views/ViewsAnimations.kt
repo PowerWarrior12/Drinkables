@@ -13,29 +13,31 @@ const val MIN_SCALE = 0.05f
 const val SCALE_FACTOR = 1.5f
 
 @SuppressLint("Recycle")
-fun View.startJellyAnimation(duration: Long, scale_: Float) {
-    val newScale = NORMAL_SCALE + scale_
+fun View.startJellyAnimation(duration: Long, scale: Float) {
+    val newScale = NORMAL_SCALE + scale
     val widthAnimator = ObjectAnimator.ofFloat(this, View.SCALE_X, newScale).setDuration(duration)
     val heightAnimator = ObjectAnimator.ofFloat(this, View.SCALE_Y, newScale).setDuration(duration)
     val setAnimator = AnimatorSet()
     val view = this
-    setAnimator.duration = duration
-    setAnimator.playTogether(widthAnimator, heightAnimator)
-    setAnimator.addListener(
-        object : AnimatorListener {
-            override fun onAnimationStart(animation: Animator?) {}
-            override fun onAnimationRepeat(animation: Animator?) {}
-            override fun onAnimationEnd(animation: Animator?) {
-                if (abs(scale_) > MIN_SCALE) {
-                    view.startJellyAnimation(duration, scale_ / SCALE_FACTOR * -1f)
-                } else {
-                    widthAnimator.setFloatValues(NORMAL_SCALE)
-                    heightAnimator.setFloatValues(NORMAL_SCALE)
-                    setAnimator.playTogether(widthAnimator, heightAnimator)
+    with(setAnimator){
+        this.duration = duration
+        playTogether(widthAnimator, heightAnimator)
+        addListener(
+            object : AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {}
+                override fun onAnimationRepeat(animation: Animator?) {}
+                override fun onAnimationEnd(animation: Animator?) {
+                    if (abs(scale) > MIN_SCALE) {
+                        view.startJellyAnimation(duration, scale / SCALE_FACTOR * -1f)
+                    } else {
+                        widthAnimator.setFloatValues(NORMAL_SCALE)
+                        heightAnimator.setFloatValues(NORMAL_SCALE)
+                        setAnimator.playTogether(widthAnimator, heightAnimator)
+                    }
                 }
-            }
 
-            override fun onAnimationCancel(animation: Animator?) {}
-        })
-    setAnimator.start()
+                override fun onAnimationCancel(animation: Animator?) {}
+            })
+        start()
+    }
 }
