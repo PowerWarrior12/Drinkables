@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
@@ -50,8 +51,12 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
                 drinkViewModel.changeFavouriteDrink()
                 setFragmentResult(
                     DrinksListFragment.RESULT_KEY,
-                    bundleOf(DrinksListFragment.DRINK_ID to drinkId))
+                    bundleOf(DrinksListFragment.DRINK_ID to drinkId)
+                )
                 heartButton.startJellyAnimation(HEART_BUTTON_DURATION, HEARD_BUTTON_SCALE_GROWTH)
+            }
+            errorLayout.retryButton.setOnClickListener {
+                drinkViewModel.reloadDrinkDetailed()
             }
         }
     }
@@ -64,6 +69,22 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
 
     private fun observeData() {
         drinkViewModel.drinkDetailedLiveData.observe(viewLifecycleOwner, ::fillDrinkData)
+
+        drinkViewModel.loadDrinkLiveData.observe(viewLifecycleOwner) { isLoading ->
+            binding.apply {
+                progressBar.isVisible = isLoading
+                heartButton.isVisible = !isLoading
+                motionContainer.getTransition(R.id.my_transition).isEnabled = !isLoading
+            }
+        }
+
+        drinkViewModel.errorDrinkLiveData.observe(viewLifecycleOwner){ isError ->
+            binding.apply {
+                errorLayout.group.isVisible = isError
+                heartButton.isVisible = !isError
+                motionContainer.getTransition(R.id.my_transition).isEnabled = !isError
+            }
+        }
     }
 
     private fun fillDrinkData(drink: Drink) {
