@@ -78,7 +78,7 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
             }
         }
 
-        drinkViewModel.errorDrinkLiveData.observe(viewLifecycleOwner){ isError ->
+        drinkViewModel.errorDrinkLiveData.observe(viewLifecycleOwner) { isError ->
             binding.apply {
                 errorLayout.group.isVisible = isError
                 heartButton.isVisible = !isError
