@@ -11,7 +11,7 @@ class MainActivityViewModel(
 ) : ViewModel() {
 
     fun openListFragment() {
-        router.navigateTo(Screens.drinksListFragment())
+        router.newRootScreen(Screens.drinksListFragment())
     }
 
     class MainActivityViewModelFactory @Inject constructor(

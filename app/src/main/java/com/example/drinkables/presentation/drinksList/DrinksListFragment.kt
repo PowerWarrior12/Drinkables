@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.drinkables.R
@@ -31,15 +33,17 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
         drinksListViewModelFactory
     }
 
-    private val drinksAdapter = DrinksAdapter(object : DrinkViewHolder.DrinkViewListener {
-        override fun onHeartButtonClick(id: Int) {
-            drinksViewModel.changeFavouriteDrink(id)
-        }
+    private val drinksAdapter = DrinksAdapter(
+        object : DrinkViewHolder.DrinkViewListener {
+            override fun onHeartButtonClick(id: Int) {
+                drinksViewModel.changeFavouriteDrink(id)
+            }
 
-        override fun onCurrentDrinkClick(id: Int) {
-            drinksViewModel.openDetailedWindow(id)
+            override fun onCurrentDrinkClick(id: Int) {
+                drinksViewModel.openDetailedWindow(id)
+            }
         }
-    })
+    )
 
     private val binding by viewBinding(FragmentDrinksListBinding::bind)
 
@@ -60,7 +64,14 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
             header = DrinkStateAdapter { drinksAdapter.retry() },
             footer = DrinkStateAdapter { drinksAdapter.retry() }
         )
+        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        binding.drinksRecyclerView.addItemDecoration(decoration)
         binding.errorButton.setOnClickListener { drinksAdapter.retry() }
+
+        setFragmentResultListener(RESULT_KEY) { _, bundle ->
+            val id = bundle.getInt(DRINK_ID)
+            drinksAdapter.updateFavouriteDrink(id)
+        }
     }
 
     private fun observeData() {
@@ -79,6 +90,8 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
     }
 
     companion object {
+        const val RESULT_KEY = "drink_result"
+        const val DRINK_ID = "drink_id"
         fun newInstance() = DrinksListFragment()
     }
 }
