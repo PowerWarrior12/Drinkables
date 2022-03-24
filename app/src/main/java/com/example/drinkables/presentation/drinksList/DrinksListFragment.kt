@@ -66,7 +66,7 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
         )
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         binding.drinksRecyclerView.addItemDecoration(decoration)
-        binding.errorButton.setOnClickListener { drinksAdapter.retry() }
+        binding.errorLayout.retryButton.setOnClickListener { drinksAdapter.retry() }
 
         setFragmentResultListener(RESULT_KEY) { _, bundle ->
             val id = bundle.getInt(DRINK_ID)
@@ -84,7 +84,7 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
                 //Show loading bar
                 binding.progressBar.isVisible = loadState.source.refresh is LoadState.Loading
                 //Show error button
-                binding.errorButton.isVisible = loadState.source.refresh is LoadState.Error
+                binding.errorLayout.group.isVisible = loadState.source.refresh is LoadState.Error
             }
         }
     }

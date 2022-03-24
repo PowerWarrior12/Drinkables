@@ -30,17 +30,14 @@
         tools:context=".presentation.drinksList.DrinksListFragment"
         tools:visibility="visible" />
 
-    <ImageButton
-        android:id="@+id/error_button"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/ic_warning"
-        android:scaleType="centerCrop"
+    <include
+        android:id="@+id/error_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="SpeakableTextPresentCheck"
-        tools:visibility="gone" />
+        layout="@layout/error_layout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
