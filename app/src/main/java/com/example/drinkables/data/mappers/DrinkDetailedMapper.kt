@@ -10,8 +10,7 @@ class DrinkDetailedMapper @Inject constructor() :
         return Drink(
             id = entityFrom.id,
             title = entityFrom.name,
-            description = entityFrom.description,
-            imageUrl = entityFrom.imageUrl
+            description = entityFrom.description
         )
     }
 }

@@ -54,7 +54,6 @@ class DrinkDetailedViewModel(
 
     fun reloadDrinkDetailed() {
         errorDrinkLiveData.postValue(false)
-        getDrinkDetailed()
     }
 
     fun changeFavouriteDrink() {

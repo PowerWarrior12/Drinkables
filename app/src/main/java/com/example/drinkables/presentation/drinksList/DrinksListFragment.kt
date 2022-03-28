@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.drinkables.R
 import com.example.drinkables.databinding.FragmentDrinksListBinding
+import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.presentation.DrinksApplication
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -35,8 +36,8 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
 
     private val drinksAdapter = DrinksAdapter(
         object : DrinkViewHolder.DrinkViewListener {
-            override fun onHeartButtonClick(id: Int) {
-                drinksViewModel.changeFavouriteDrink(id)
+            override fun onHeartButtonClick(drink: Drink) {
+                drinksViewModel.changeFavouriteDrink(drink)
             }
 
             override fun onCurrentDrinkClick(id: Int) {

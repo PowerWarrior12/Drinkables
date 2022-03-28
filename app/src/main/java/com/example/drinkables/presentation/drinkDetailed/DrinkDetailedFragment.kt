@@ -2,6 +2,7 @@ package com.example.drinkables.presentation.drinkDetailed
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -21,6 +22,7 @@ import com.example.drinkables.utils.views.startJellyAnimation
 import javax.inject.Inject
 
 private const val DRINK_ID = "drinkId"
+private val TAG = DrinkDetailedFragment::class.simpleName
 
 /**
  * Use the [DrinkDetailedFragment.newInstance] factory method to
@@ -71,6 +73,7 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
         drinkViewModel.drinkDetailedLiveData.observe(viewLifecycleOwner, ::fillDrinkData)
 
         drinkViewModel.loadDrinkLiveData.observe(viewLifecycleOwner) { isLoading ->
+            Log.d(TAG, "Changing the loading state")
             binding.apply {
                 progressBar.isVisible = isLoading
                 heartButton.isVisible = !isLoading
@@ -79,6 +82,7 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
         }
 
         drinkViewModel.errorDrinkLiveData.observe(viewLifecycleOwner) { isError ->
+            Log.d(TAG, "Changing the error state")
             binding.apply {
                 errorLayout.group.isVisible = isError
                 heartButton.isVisible = !isError

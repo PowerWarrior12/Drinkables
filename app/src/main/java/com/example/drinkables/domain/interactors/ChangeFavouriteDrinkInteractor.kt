@@ -7,22 +7,17 @@ import javax.inject.Inject
 class ChangeFavouriteDrinkInteractor @Inject constructor(
     private val favouriteDrinksRepository: FavouriteDrinksRepository
 ) {
-
-    suspend fun run(drinkId: Int) {
-        updateFavouriteInStorage(drinkId)
-    }
-
     suspend fun run(drink: Drink): Drink {
-        updateFavouriteInStorage(drink.id)
+        updateFavouriteInStorage(drink)
         return drink.copy(favourites = !drink.favourites)
     }
 
-    private suspend fun updateFavouriteInStorage(drinkId: Int) {
-        val isFavourite = favouriteDrinksRepository.checkFavouriteDrink(drinkId)
+    private suspend fun updateFavouriteInStorage(drink: Drink) {
+        val isFavourite = favouriteDrinksRepository.checkFavouriteDrink(drink.id)
         if (isFavourite) {
-            favouriteDrinksRepository.deleteFavouriteDrink(drinkId)
+            favouriteDrinksRepository.deleteFavouriteDrink(drink)
         } else {
-            favouriteDrinksRepository.addFavouriteDrink(drinkId)
+            favouriteDrinksRepository.addFavouriteDrink(drink)
         }
     }
 }
