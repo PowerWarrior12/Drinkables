@@ -57,20 +57,19 @@ class DrinksRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getFavouritesDrinkIds(): List<Int> {
-        return drinkDB.drinkDao().getFavouriteDrinks().map { drink ->
-            drink.id
-        }
+        return drinkDB.drinkDao().getFavouriteDrinksIds()
     }
 
-    override suspend fun getFavouriteDrinks(): List<Drink> {
-        return drinkDB.drinkDao().getFavouriteDrinks().map{ drinkEntity ->
-            drinkEntityToDrinkMapper.mapEntity(drinkEntity)
+    override suspend fun getFavouriteDrinks(): Flow<List<Drink>> {
+        return drinkDB.drinkDao().getFavouriteDrinks().map { drinks ->
+            drinks.map { drink ->
+                drinkEntityToDrinkMapper.mapEntity(drink)
+            }
         }
     }
 
     override suspend fun checkFavouriteDrink(drinkId: Int): Boolean {
-        val x = drinkDB.drinkDao().getFavouriteDrink(drinkId)
-        return x != null
+        return drinkDB.drinkDao().getFavouriteDrink(drinkId) != null
     }
 
     override suspend fun addFavouriteDrink(drink: Drink) {

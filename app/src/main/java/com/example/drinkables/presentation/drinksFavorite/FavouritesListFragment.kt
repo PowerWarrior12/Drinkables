@@ -3,15 +3,23 @@ package com.example.drinkables.presentation.drinksFavorite
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.example.drinkables.R
 import com.example.drinkables.databinding.FragmentDrinksListBinding
 import com.example.drinkables.presentation.DrinksApplication
+import com.example.drinkables.presentation.mainActivity.MainActivity
+import com.example.drinkables.utils.views.setState
 import javax.inject.Inject
 
-class FavouritesListFragment : Fragment() {
+private const val FRAGMENT_ITEM_ID = R.id.navigation_favourites
+private const val VISIBLE_NAVIGATION = true
+
+class FavouritesListFragment : Fragment(R.layout.fragment_drinks_list) {
     @Inject
     lateinit var favouritesViewModelFactory: FavouritesViewModel.FavouritesViewModelFactory
 
@@ -40,7 +48,15 @@ class FavouritesListFragment : Fragment() {
     }
 
     private fun initViews() {
+        (activity as MainActivity).binding.bottomNavigation.setState(
+            FRAGMENT_ITEM_ID,
+            VISIBLE_NAVIGATION
+        )
         binding.apply {
+            toolbar.title = resources.getString(R.string.favourites_window)
+            errorLayout.group.isVisible = false
+            progressBar.isVisible = false
+            drinksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
             drinksRecyclerView.adapter = favouritesAdapter
             val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
             drinksRecyclerView.addItemDecoration(decoration)
@@ -49,9 +65,10 @@ class FavouritesListFragment : Fragment() {
 
     private fun observeData() {
         favouritesViewModel.favouriteDrinksLiveData.observe(
-            viewLifecycleOwner,
-            favouritesAdapter::submitList
-        )
+            viewLifecycleOwner
+        ) {
+            favouritesAdapter.submitList(it.toMutableList())
+        }
     }
 
     companion object {

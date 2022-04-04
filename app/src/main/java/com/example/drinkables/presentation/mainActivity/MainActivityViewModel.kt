@@ -7,16 +7,24 @@ import com.github.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class MainActivityViewModel(
-    private val router : Router
+    private val router: Router
 ) : ViewModel() {
 
-    fun openListFragment() {
+    fun openFirstFragment() {
         router.newRootScreen(Screens.drinksListFragment())
     }
 
+    fun openListFragment() {
+        router.navigateTo(Screens.drinksListFragment())
+    }
+
+    fun openFavouritesFragment() {
+        router.navigateTo(Screens.favouritesListFragment())
+    }
+
     class MainActivityViewModelFactory @Inject constructor(
-        private val router : Router
-    ) : ViewModelProvider.NewInstanceFactory(){
+        private val router: Router
+    ) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return MainActivityViewModel(router) as T
         }

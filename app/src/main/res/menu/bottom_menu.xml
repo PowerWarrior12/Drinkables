@@ -8,5 +8,5 @@
     <item
         android:id="@+id/navigation_favourites"
         android:icon="@drawable/ic_heart"
-        android:title="@string/app_name"/>
+        android:title="@string/favourites_window"/>
 </menu>

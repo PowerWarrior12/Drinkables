@@ -2,4 +2,6 @@
     <string name="app_name">Напитки</string>
     <string name="retry_button">Повторить</string>
     <string name="error_text">Произошла ошибка</string>
+    <string name="catalog_window">Каталог</string>
+    <string name="favourites_window">Избранные</string>
 </resources>

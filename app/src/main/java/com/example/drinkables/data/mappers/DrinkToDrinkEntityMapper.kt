@@ -11,7 +11,7 @@ class DrinkToDrinkEntityMapper @Inject constructor() :
             id = entityFrom.id,
             title = entityFrom.title,
             description = entityFrom.description,
-            imageUrl = entityFrom.imageUrl
+            imageUrl = entityFrom.imageUrl ?: ""
         )
     }
 }

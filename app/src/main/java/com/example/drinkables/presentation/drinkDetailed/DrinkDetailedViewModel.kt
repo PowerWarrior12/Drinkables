@@ -10,6 +10,7 @@ import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.interactors.ChangeFavouriteDrinkInteractor
 import com.example.drinkables.domain.interactors.LoadDrinkDetailedInteractor
 import com.example.drinkables.domain.interactors.UpdateDrinkFavouriteInteractor
+import com.github.terrakok.cicerone.Router
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -21,6 +22,7 @@ class DrinkDetailedViewModel(
     private val loadDrinkDetailedInteractor: LoadDrinkDetailedInteractor,
     private val changeFavouriteDrinkInteractor: ChangeFavouriteDrinkInteractor,
     private val updateDrinkFavouriteInteractor: UpdateDrinkFavouriteInteractor,
+    private val router: Router,
     private val drinkId: Int
 ) : ViewModel() {
 
@@ -56,6 +58,10 @@ class DrinkDetailedViewModel(
         errorDrinkLiveData.postValue(false)
     }
 
+    fun openBackView() {
+        router.exit()
+    }
+
     fun changeFavouriteDrink() {
         viewModelScope.launch {
             drinkDetailedLiveData.value?.let { drink ->
@@ -68,6 +74,7 @@ class DrinkDetailedViewModel(
         private val loadDrinkDetailedInteractor: LoadDrinkDetailedInteractor,
         private val changeFavouriteDrinkInteractor: ChangeFavouriteDrinkInteractor,
         private val updateDrinkFavouriteInteractor: UpdateDrinkFavouriteInteractor,
+        private val router: Router,
         @Assisted private val drinkId: Int
     ) :
         ViewModelProvider.NewInstanceFactory() {
@@ -76,6 +83,7 @@ class DrinkDetailedViewModel(
                 loadDrinkDetailedInteractor,
                 changeFavouriteDrinkInteractor,
                 updateDrinkFavouriteInteractor,
+                router,
                 drinkId
             ) as T
         }

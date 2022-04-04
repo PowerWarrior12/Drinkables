@@ -8,18 +8,25 @@ import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.interactors.LoadDrinksFavouriteInteractor
 import com.example.drinkables.presentation.Screens
 import com.github.terrakok.cicerone.Router
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FavouritesViewModel(
-    loadDinkFavouritesInteractor: LoadDrinksFavouriteInteractor,
+    private val loadDinkFavouritesInteractor: LoadDrinksFavouriteInteractor,
     private val router: Router
 ) : ViewModel() {
     val favouriteDrinksLiveData = MutableLiveData<List<Drink>>()
 
     init {
+        getFavouritesDrink()
+    }
+
+    private fun getFavouritesDrink() {
         viewModelScope.launch {
-            favouriteDrinksLiveData.postValue(loadDinkFavouritesInteractor.run())
+            loadDinkFavouritesInteractor.run().collect { drinks ->
+                favouriteDrinksLiveData.postValue(drinks)
+            }
         }
     }
 
