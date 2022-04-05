@@ -30,7 +30,7 @@ class FavouritesListFragment : Fragment(R.layout.fragment_drinks_list) {
     private val favouritesAdapter =
         FavouritesAdapter(object : FavouriteDrinkViewHolder.FavouriteDrinkViewListener {
             override fun onCurrentDrinkClick(id: Int) {
-                favouritesViewModel.openDetailedWindow(id)
+                favouritesViewModel.onCurrentDrinkClick(id)
             }
         })
 
@@ -66,8 +66,8 @@ class FavouritesListFragment : Fragment(R.layout.fragment_drinks_list) {
     private fun observeData() {
         favouritesViewModel.favouriteDrinksLiveData.observe(
             viewLifecycleOwner
-        ) {
-            favouritesAdapter.submitList(it.toMutableList())
+        ) { drinks ->
+            favouritesAdapter.submitList(drinks.toMutableList())
         }
     }
 

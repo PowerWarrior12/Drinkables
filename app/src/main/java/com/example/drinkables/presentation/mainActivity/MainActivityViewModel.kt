@@ -14,11 +14,11 @@ class MainActivityViewModel(
         router.newRootScreen(Screens.drinksListFragment())
     }
 
-    fun openListFragment() {
+    fun onCatalogSelected() {
         router.navigateTo(Screens.drinksListFragment())
     }
 
-    fun openFavouritesFragment() {
+    fun onFavouriteSelected() {
         router.navigateTo(Screens.favouritesListFragment())
     }
 

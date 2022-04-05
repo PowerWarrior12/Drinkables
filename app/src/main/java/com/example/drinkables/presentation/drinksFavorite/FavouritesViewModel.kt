@@ -30,7 +30,7 @@ class FavouritesViewModel(
         }
     }
 
-    fun openDetailedWindow(id: Int) {
+    fun onCurrentDrinkClick(id: Int) {
         router.navigateTo(Screens.drinkDetailedFragment(id))
     }
 

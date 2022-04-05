@@ -11,18 +11,16 @@ class FavouritesAdapter(private val favouriteDrinkCallback: FavouriteDrinkViewHo
     ListAdapter<Drink, FavouriteDrinkViewHolder>(DrinkItemCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavouriteDrinkViewHolder {
         return FavouriteDrinkViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.favourite_drink_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.favourite_drink_item, parent, false)
         )
     }
-
     override fun onBindViewHolder(holder: FavouriteDrinkViewHolder, position: Int) {
         holder.bind(getItem(position), favouriteDrinkCallback)
     }
 
     override fun submitList(list: MutableList<Drink>?) {
-        super.submitList(list?.map {
-            it.copy()
+        super.submitList(list?.map { drink ->
+            drink.copy()
         })
     }
 }

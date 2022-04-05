@@ -1,9 +1,6 @@
 package com.example.drinkables.presentation.mainActivity
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -55,8 +52,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private fun initView() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_catalog -> viewModel.openListFragment()
-                R.id.navigation_favourites -> viewModel.openFavouritesFragment()
+                R.id.navigation_catalog -> viewModel.openFirstFragment()
+                R.id.navigation_favourites -> viewModel.onFavouriteSelected()
             }
             true
         }
@@ -69,10 +66,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         if (currentFragment == null) {
             viewModel.openFirstFragment()
         }
-    }
-
-    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
-        return super.onCreateView(name, context, attrs)
     }
 
     override fun onResume() {
