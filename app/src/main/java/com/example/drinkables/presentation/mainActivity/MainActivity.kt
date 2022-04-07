@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private fun initView() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_catalog -> viewModel.openFirstFragment()
+                R.id.navigation_catalog -> viewModel.onCatalogSelected()
                 R.id.navigation_favourites -> viewModel.onFavouriteSelected()
             }
             true
@@ -78,6 +78,4 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         navigatorHolder.removeNavigator()
         super.onPause()
     }
-
-
 }
