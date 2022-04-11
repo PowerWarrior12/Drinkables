@@ -2,9 +2,8 @@ package com.example.drinkables.presentation.di
 
 import com.example.drinkables.data.api.entities.DrinkResponse
 import com.example.drinkables.data.api.entities.DrinksResponse
-import com.example.drinkables.data.mappers.DrinkDetailedMapper
-import com.example.drinkables.data.mappers.DrinkMapper
-import com.example.drinkables.data.mappers.EntityMapper
+import com.example.drinkables.data.bd.DrinkEntity
+import com.example.drinkables.data.mappers.*
 import com.example.drinkables.data.repositories.DrinksRepository
 import com.example.drinkables.data.repositories.DrinksRepositoryImpl
 import com.example.drinkables.data.repositories.FavouriteDrinksRepository
@@ -33,4 +32,14 @@ abstract class AppBindModule {
     abstract fun bindDrinkDetailedViewEntityMapper(
         drinkDetailedViewEntityMapper: DrinkDetailedMapper
     ): EntityMapper<DrinkResponse, Drink>
+
+    @Binds
+    abstract fun bindDrinkToDrinkEntityMapper(
+        drinkToDrinkEntityMapper: DrinkToDrinkEntityMapper
+    ): EntityMapper<Drink, DrinkEntity>
+
+    @Binds
+    abstract fun bindDrinkEntityToDrinkMapper(
+        drinkEntityToDrinkMapper: DrinkEntityToDrinkMapper
+    ): EntityMapper<DrinkEntity, Drink>
 }

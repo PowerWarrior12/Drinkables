@@ -30,9 +30,9 @@ class DrinksListViewModel(
         return loadPagingDrinksInteractor.run()
     }
 
-    fun changeFavouriteDrink(drinkId: Int) {
+    fun changeFavouriteDrink(drink: Drink) {
         viewModelScope.launch {
-            changeFavouriteDrinkInteractor.run(drinkId)
+            changeFavouriteDrinkInteractor.run(drink)
         }
     }
 

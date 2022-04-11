@@ -14,7 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.drinkables.R
 import com.example.drinkables.databinding.FragmentDrinksListBinding
+import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.presentation.DrinksApplication
+import com.example.drinkables.presentation.mainActivity.MainActivity
+import com.example.drinkables.utils.views.setState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -24,6 +27,10 @@ import javax.inject.Inject
  * Use the [DrinksListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+
+private const val FRAGMENT_ITEM_ID = R.id.navigation_catalog
+private const val VISIBLE_NAVIGATION = true
+
 class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
 
     @Inject
@@ -35,8 +42,8 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
 
     private val drinksAdapter = DrinksAdapter(
         object : DrinkViewHolder.DrinkViewListener {
-            override fun onHeartButtonClick(id: Int) {
-                drinksViewModel.changeFavouriteDrink(id)
+            override fun onHeartButtonClick(drink: Drink) {
+                drinksViewModel.changeFavouriteDrink(drink)
             }
 
             override fun onCurrentDrinkClick(id: Int) {
@@ -59,6 +66,11 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
     }
 
     private fun initViews() {
+        (activity as MainActivity).binding.bottomNavigation.setState(
+            FRAGMENT_ITEM_ID,
+            VISIBLE_NAVIGATION
+        )
+        binding.toolbar.title = resources.getString(R.string.catalog_window)
         binding.drinksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.drinksRecyclerView.adapter = drinksAdapter.withLoadStateHeaderAndFooter(
             header = DrinkStateAdapter { drinksAdapter.retry() },

@@ -24,8 +24,11 @@ class DrinkViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 drinkTitleText.text = drink.title
                 setHeartButtonBackground(drink)
                 heartButton.setOnClickListener {
-                    heartButton.startJellyAnimation(HEART_BUTTON_DURATION, HEARD_BUTTON_SCALE_GROWTH)
-                    callback.onHeartButtonClick(drink.id)
+                    heartButton.startJellyAnimation(
+                        HEART_BUTTON_DURATION,
+                        HEARD_BUTTON_SCALE_GROWTH
+                    )
+                    callback.onHeartButtonClick(drink)
                     drink.favourites = !drink.favourites
                     setHeartButtonBackground(drink)
                 }
@@ -47,7 +50,7 @@ class DrinkViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     interface DrinkViewListener {
-        fun onHeartButtonClick(id: Int)
+        fun onHeartButtonClick(drink: Drink)
         fun onCurrentDrinkClick(id: Int)
     }
 }

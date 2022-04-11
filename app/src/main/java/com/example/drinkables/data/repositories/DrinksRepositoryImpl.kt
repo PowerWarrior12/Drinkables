@@ -23,6 +23,8 @@ class DrinksRepositoryImpl @Inject constructor(
     private val drinksApi: DrinksApi,
     private val drinkViewEntityMapper: EntityMapper<DrinksResponse, Drink>,
     private val drinkDetailedViewEntityMapper: EntityMapper<DrinkResponse, Drink>,
+    private val drinkToDrinkEntityMapper: EntityMapper<Drink, DrinkEntity>,
+    private val drinkEntityToDrinkMapper: EntityMapper<DrinkEntity, Drink>,
     private val drinkDB: DrinkDB
 ) : DrinksRepository, FavouriteDrinksRepository {
     override suspend fun loadDrinkDetailed(id: Int): Result<Drink> {
@@ -55,8 +57,14 @@ class DrinksRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getFavouritesDrinkIds(): List<Int> {
-        return drinkDB.drinkDao().getFavouriteDrinks().map { drink ->
-            drink.id
+        return drinkDB.drinkDao().getFavouriteDrinksIds()
+    }
+
+    override suspend fun getFavouriteDrinks(): Flow<List<Drink>> {
+        return drinkDB.drinkDao().getFavouriteDrinks().map { drinks ->
+            drinks.map { drink ->
+                drinkEntityToDrinkMapper.mapEntity(drink)
+            }
         }
     }
 
@@ -64,11 +72,11 @@ class DrinksRepositoryImpl @Inject constructor(
         return drinkDB.drinkDao().getFavouriteDrink(drinkId) != null
     }
 
-    override suspend fun addFavouriteDrink(drinkId: Int) {
-        drinkDB.drinkDao().addFavouriteDrink(DrinkEntity(drinkId))
+    override suspend fun addFavouriteDrink(drink: Drink) {
+        drinkDB.drinkDao().addFavouriteDrink(drinkToDrinkEntityMapper.mapEntity(drink))
     }
 
-    override suspend fun deleteFavouriteDrink(drinkId: Int) {
-        drinkDB.drinkDao().deleteFavouriteDrink(DrinkEntity(drinkId))
+    override suspend fun deleteFavouriteDrink(drink: Drink) {
+        drinkDB.drinkDao().deleteFavouriteDrink(drinkToDrinkEntityMapper.mapEntity(drink))
     }
 }

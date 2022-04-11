@@ -1,6 +1,7 @@
 package com.example.drinkables.presentation.di
 
 import com.example.drinkables.presentation.drinkDetailed.DrinkDetailedFragment
+import com.example.drinkables.presentation.drinksFavorite.FavouritesListFragment
 import com.example.drinkables.presentation.drinksList.DrinksListFragment
 import com.example.drinkables.presentation.mainActivity.MainActivity
 import dagger.Component
@@ -12,4 +13,5 @@ interface AppComponent {
     fun inject(fragment: DrinksListFragment)
     fun inject(activity: MainActivity)
     fun inject(fragment: DrinkDetailedFragment)
+    fun inject(fragment: FavouritesListFragment)
 }

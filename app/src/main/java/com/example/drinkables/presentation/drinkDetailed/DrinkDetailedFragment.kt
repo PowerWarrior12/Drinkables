@@ -2,6 +2,7 @@ package com.example.drinkables.presentation.drinkDetailed
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -16,11 +17,15 @@ import com.example.drinkables.databinding.FragmentDrinkDetailedBinding
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.presentation.DrinksApplication
 import com.example.drinkables.presentation.drinksList.DrinksListFragment
+import com.example.drinkables.presentation.mainActivity.MainActivity
 import com.example.drinkables.utils.setImageByUrl
+import com.example.drinkables.utils.views.setVisibility
 import com.example.drinkables.utils.views.startJellyAnimation
 import javax.inject.Inject
 
 private const val DRINK_ID = "drinkId"
+private val TAG = DrinkDetailedFragment::class.simpleName
+private const val VISIBLE_NAVIGATION = false
 
 /**
  * Use the [DrinkDetailedFragment.newInstance] factory method to
@@ -46,17 +51,24 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
     }
 
     private fun initViews() {
+        (activity as MainActivity).binding.bottomNavigation.setVisibility(VISIBLE_NAVIGATION)
         binding.apply {
-            heartButton.setOnClickListener {
+            toolbarDetailed.heartButton.setOnClickListener {
                 drinkViewModel.changeFavouriteDrink()
                 setFragmentResult(
                     DrinksListFragment.RESULT_KEY,
                     bundleOf(DrinksListFragment.DRINK_ID to drinkId)
                 )
-                heartButton.startJellyAnimation(HEART_BUTTON_DURATION, HEARD_BUTTON_SCALE_GROWTH)
+                toolbarDetailed.heartButton.startJellyAnimation(
+                    HEART_BUTTON_DURATION,
+                    HEARD_BUTTON_SCALE_GROWTH
+                )
             }
             errorLayout.retryButton.setOnClickListener {
                 drinkViewModel.reloadDrinkDetailed()
+            }
+            toolbarDetailed.backButton.setOnClickListener {
+                drinkViewModel.openBackView()
             }
         }
     }
@@ -71,17 +83,19 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
         drinkViewModel.drinkDetailedLiveData.observe(viewLifecycleOwner, ::fillDrinkData)
 
         drinkViewModel.loadDrinkLiveData.observe(viewLifecycleOwner) { isLoading ->
+            Log.d(TAG, "Changing the loading state")
             binding.apply {
                 progressBar.isVisible = isLoading
-                heartButton.isVisible = !isLoading
+                toolbarDetailed.heartButton.isVisible = !isLoading
                 motionContainer.getTransition(R.id.my_transition).isEnabled = !isLoading
             }
         }
 
         drinkViewModel.errorDrinkLiveData.observe(viewLifecycleOwner) { isError ->
+            Log.d(TAG, "Changing the error state")
             binding.apply {
                 errorLayout.group.isVisible = isError
-                heartButton.isVisible = !isError
+                toolbarDetailed.heartButton.isVisible = !isError
                 motionContainer.getTransition(R.id.my_transition).isEnabled = !isError
             }
         }
@@ -89,9 +103,9 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
 
     private fun fillDrinkData(drink: Drink) {
         binding.apply {
-            drinkTitleText.text = drink.title
             setHeartButtonBackground(drink)
             drinkDescriptionText.text = drink.description
+            toolbarDetailed.toolbar.title = drink.title
             drink.imageUrl?.let {
                 drinkImage.setImageByUrl(drink.imageUrl)
             }
@@ -99,7 +113,7 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
     }
 
     private fun setHeartButtonBackground(drink: Drink) {
-        binding.heartButton.apply {
+        binding.toolbarDetailed.heartButton.apply {
             when (drink.favourites) {
                 true -> setBackgroundResource(R.drawable.ic_heart_favourite)
                 false -> setBackgroundResource(R.drawable.ic_heart)

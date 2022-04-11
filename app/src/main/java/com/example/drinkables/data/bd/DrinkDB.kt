@@ -1,7 +1,6 @@
 package com.example.drinkables.data.bd
 
 import android.content.Context
-import android.os.Build
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
