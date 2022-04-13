@@ -8,4 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface DrinksRepository {
     suspend fun loadDrinkDetailed(id: Int): Result<Drink>
     fun getPagingDrinks(): Flow<PagingData<Drink>>
+    fun getPagingDrinksByName(name: String): Flow<PagingData<Drink>>
 }

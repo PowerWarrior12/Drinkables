@@ -53,13 +53,14 @@ class FavouritesListFragment : Fragment(R.layout.fragment_drinks_list) {
             VISIBLE_NAVIGATION
         )
         binding.apply {
-            toolbar.title = resources.getString(R.string.favourites_window)
+            mainToolbar.toolbar.title = resources.getString(R.string.favourites_window)
             errorLayout.group.isVisible = false
             progressBar.isVisible = false
             drinksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
             drinksRecyclerView.adapter = favouritesAdapter
             val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
             drinksRecyclerView.addItemDecoration(decoration)
+            mainToolbar.searchView.visibility = View.GONE
         }
     }
 
