@@ -87,17 +87,14 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
             val id = bundle.getInt(DRINK_ID)
             drinksAdapter.updateFavouriteDrink(id)
         }
-        binding.mainToolbar.searchView.setOnQueryTextListener(object :
-            SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        binding.mainToolbar.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                viewLifecycleOwner.lifecycleScope.launch {
+                lifecycleScope.launch {
                     drinksAdapter.submitData(PagingData.empty())
                 }
-                drinksViewModel.updateDrinksFlowByName(newText ?: "")
+                drinksViewModel.updateDrinksFlowByName(newText.orEmpty())
                 submitToDrinksFlow(drinksViewModel.drinksFlow)
                 return false
             }
@@ -107,7 +104,7 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
     private fun observeData() {
         submitToDrinksFlow(drinksViewModel.drinksFlow)
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             drinksAdapter.loadStateFlow.collect { loadState ->
                 //Show loading bar
                 binding.progressBar.isVisible = loadState.source.refresh is LoadState.Loading
@@ -118,7 +115,7 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
     }
 
     private fun submitToDrinksFlow(drinksFlow: Flow<PagingData<Drink>>) {
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             drinksFlow.collectLatest(drinksAdapter::submitData)
         }
     }

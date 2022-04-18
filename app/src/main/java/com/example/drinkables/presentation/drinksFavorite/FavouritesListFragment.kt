@@ -60,7 +60,7 @@ class FavouritesListFragment : Fragment(R.layout.fragment_drinks_list) {
             drinksRecyclerView.adapter = favouritesAdapter
             val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
             drinksRecyclerView.addItemDecoration(decoration)
-            mainToolbar.searchView.visibility = View.GONE
+            mainToolbar.searchView.isVisible = false
         }
     }
 
