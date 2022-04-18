@@ -15,6 +15,12 @@ interface DrinksApi {
 
     @GET("beers?")
     suspend fun loadDrinksPage(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+    ): Response<MutableList<DrinksResponse>>
+
+    @GET("beers?")
+    suspend fun loadDrinksPageByName(
+        @Query("page") page: Int,
+        @Query("beer_name") name: String
     ): Response<MutableList<DrinksResponse>>
 }

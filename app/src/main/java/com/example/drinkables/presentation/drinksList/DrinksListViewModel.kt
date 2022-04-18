@@ -19,7 +19,7 @@ class DrinksListViewModel(
     private val loadPagingDrinksInteractor: LoadPagingDrinksInteractor,
     private val router: Router
 ) : ViewModel() {
-    val drinksFlow: Flow<PagingData<Drink>>
+    var drinksFlow: Flow<PagingData<Drink>>
 
     init {
         drinksFlow = getPagingDrinks()
@@ -34,6 +34,11 @@ class DrinksListViewModel(
         viewModelScope.launch {
             changeFavouriteDrinkInteractor.run(drink)
         }
+    }
+
+    fun updateDrinksFlowByName(name: String) {
+        drinksFlow = loadPagingDrinksInteractor.run(name)
+            .cachedIn(viewModelScope)
     }
 
     fun openDetailedWindow(id: Int) {

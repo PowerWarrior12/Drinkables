@@ -4,13 +4,14 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.drinkables.data.api.DrinksApi
 import com.example.drinkables.data.api.entities.DrinksResponse
+import retrofit2.Response
 
 private const val STARTING_PAGE_INDEX = 1
 private const val NETWORK_PAGE_SIZE = 25
 private const val ERROR_MESSAGE = "Error of loading"
 
 class DrinksPagingSource(
-    private val drinksApi: DrinksApi
+    private val drinksLoader: DrinksLoader
 ) : PagingSource<Int, DrinksResponse>() {
     override fun getRefreshKey(state: PagingState<Int, DrinksResponse>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -22,7 +23,7 @@ class DrinksPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DrinksResponse> {
         val pageIndex = params.key ?: STARTING_PAGE_INDEX
         try {
-            val response = drinksApi.loadDrinksPage(page = pageIndex)
+            val response = drinksLoader.loadDrinks(pageIndex)
             if (response.isSuccessful) {
                 val drinks = response.body() ?: mutableListOf()
 
@@ -46,5 +47,8 @@ class DrinksPagingSource(
                 throwable = exception
             )
         }
+    }
+    interface DrinksLoader{
+        suspend fun loadDrinks(page: Int): Response<MutableList<DrinksResponse>>
     }
 }

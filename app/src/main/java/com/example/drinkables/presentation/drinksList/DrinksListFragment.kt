@@ -3,12 +3,14 @@ package com.example.drinkables.presentation.drinksList
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -18,6 +20,7 @@ import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.presentation.DrinksApplication
 import com.example.drinkables.presentation.mainActivity.MainActivity
 import com.example.drinkables.utils.views.setState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -70,7 +73,7 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
             FRAGMENT_ITEM_ID,
             VISIBLE_NAVIGATION
         )
-        binding.toolbar.title = resources.getString(R.string.catalog_window)
+        binding.mainToolbar.toolbar.title = resources.getString(R.string.catalog_window)
         binding.drinksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.drinksRecyclerView.adapter = drinksAdapter.withLoadStateHeaderAndFooter(
             header = DrinkStateAdapter { drinksAdapter.retry() },
@@ -84,20 +87,36 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
             val id = bundle.getInt(DRINK_ID)
             drinksAdapter.updateFavouriteDrink(id)
         }
+        binding.mainToolbar.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                lifecycleScope.launch {
+                    drinksAdapter.submitData(PagingData.empty())
+                }
+                drinksViewModel.updateDrinksFlowByName(newText.orEmpty())
+                submitToDrinksFlow(drinksViewModel.drinksFlow)
+                return false
+            }
+        })
     }
 
     private fun observeData() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            drinksViewModel.drinksFlow.collectLatest(drinksAdapter::submitData)
-        }
+        submitToDrinksFlow(drinksViewModel.drinksFlow)
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             drinksAdapter.loadStateFlow.collect { loadState ->
                 //Show loading bar
                 binding.progressBar.isVisible = loadState.source.refresh is LoadState.Loading
                 //Show error button
                 binding.errorLayout.group.isVisible = loadState.source.refresh is LoadState.Error
             }
+        }
+    }
+
+    private fun submitToDrinksFlow(drinksFlow: Flow<PagingData<Drink>>) {
+        lifecycleScope.launch {
+            drinksFlow.collectLatest(drinksAdapter::submitData)
         }
     }
 

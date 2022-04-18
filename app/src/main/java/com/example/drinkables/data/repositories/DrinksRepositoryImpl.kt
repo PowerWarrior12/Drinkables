@@ -14,6 +14,7 @@ import com.example.drinkables.domain.common.Result
 import com.example.drinkables.domain.entities.Drink
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import retrofit2.Response
 import javax.inject.Inject
 
 private const val ERROR_MESSAGE = "Error of loading"
@@ -46,7 +47,32 @@ class DrinksRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                DrinksPagingSource(drinksApi = drinksApi)
+                DrinksPagingSource(object: DrinksPagingSource.DrinksLoader{
+                    override suspend fun loadDrinks(page: Int): Response<MutableList<DrinksResponse>> {
+                        return drinksApi.loadDrinksPage(page)
+                    }
+                })
+            }
+        ).flow.map { pagingData ->
+            pagingData.map { response ->
+                val drink = drinkViewEntityMapper.mapEntity(response)
+                drink.copy(favourites = checkFavouriteDrink(drink.id))
+            }
+        }
+    }
+
+    override fun getPagingDrinksByName(name: String): Flow<PagingData<Drink>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = NETWORK_PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                DrinksPagingSource(object: DrinksPagingSource.DrinksLoader{
+                    override suspend fun loadDrinks(page: Int): Response<MutableList<DrinksResponse>> {
+                        return drinksApi.loadDrinksPageByName(page, name)
+                    }
+                })
             }
         ).flow.map { pagingData ->
             pagingData.map { response ->

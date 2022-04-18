@@ -9,7 +9,10 @@ import javax.inject.Inject
 class LoadPagingDrinksInteractor @Inject constructor(
     private val repository: DrinksRepository
 ) {
-    fun run(): Flow<PagingData<Drink>> {
-        return repository.getPagingDrinks()
+    fun run(name: String = ""): Flow<PagingData<Drink>> {
+        if (name.isEmpty()) {
+            return repository.getPagingDrinks()
+        }
+        return repository.getPagingDrinksByName(name)
     }
 }
