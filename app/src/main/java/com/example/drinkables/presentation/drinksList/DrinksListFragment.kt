@@ -84,18 +84,24 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
         binding.errorLayout.retryButton.setOnClickListener { drinksAdapter.retry() }
 
         setFragmentResultListener(RESULT_KEY) { _, bundle ->
-            val id = bundle.getInt(DRINK_ID)
-            drinksAdapter.updateFavouriteDrink(id)
+            if (bundle.getBoolean(IS_FAVOURITE_CHANGED)) {
+                val id = bundle.getInt(DRINK_ID)
+                drinksAdapter.updateFavouriteDrink(id)
+            }
         }
-        binding.mainToolbar.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.mainToolbar.searchView.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                lifecycleScope.launch {
-                    drinksAdapter.submitData(PagingData.empty())
+                if (!newText.isNullOrEmpty()) {
+                    lifecycleScope.launch {
+                        drinksAdapter.submitData(PagingData.empty())
+                    }
+                    drinksViewModel.updateDrinksFlowByName(newText)
+                    submitToDrinksFlow(drinksViewModel.drinksFlow)
+
                 }
-                drinksViewModel.updateDrinksFlowByName(newText.orEmpty())
-                submitToDrinksFlow(drinksViewModel.drinksFlow)
                 return false
             }
         })
@@ -123,6 +129,7 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
     companion object {
         const val RESULT_KEY = "drink_result"
         const val DRINK_ID = "drink_id"
+        const val IS_FAVOURITE_CHANGED = "is_favourite_changed"
         fun newInstance() = DrinksListFragment()
     }
 }

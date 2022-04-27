@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.interactors.LoadDrinksFavouriteInteractor
-import com.example.drinkables.presentation.Screens
+import com.example.drinkables.presentation.navigation.Screens
 import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class FavouritesViewModel(
     private val loadDinkFavouritesInteractor: LoadDrinksFavouriteInteractor,
-    private val router: Router
+    private val router: Router,
 ) : ViewModel() {
     val favouriteDrinksLiveData = MutableLiveData<List<Drink>>()
 
@@ -36,7 +36,7 @@ class FavouritesViewModel(
 
     class FavouritesViewModelFactory @Inject constructor(
         private val loadDrinksFavouritesInteractor: LoadDrinksFavouriteInteractor,
-        private val router: Router
+        private val router: Router,
     ) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return FavouritesViewModel(

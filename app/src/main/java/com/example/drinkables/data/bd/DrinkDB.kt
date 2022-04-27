@@ -24,5 +24,4 @@ abstract class DrinkDB : RoomDatabase() {
             }
         }
     }
-
 }

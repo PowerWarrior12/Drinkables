@@ -4,4 +4,13 @@
     <string name="error_text">An error has occurred</string>
     <string name="catalog_window">Catalog</string>
     <string name="favourites_window">Favourites</string>
+    <string name="properties_label">Properties</string>
+    <string name="ebc_label">EBC</string>
+    <string name="srm_label">SRM</string>
+    <string name="ph_label">PH</string>
+    <string name="attenuation_level_label">Attenuation level</string>
+    <string name="boil_volume_label">Boil volume</string>
+    <string name="ibu_label">IBU</string>
+    <string name="food_pairing_label">Food pairing</string>
+    <string name="properties_button_label">Show properties</string>
 </resources>

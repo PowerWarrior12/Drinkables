@@ -4,4 +4,13 @@
     <string name="error_text">Произошла ошибка</string>
     <string name="catalog_window">Каталог</string>
     <string name="favourites_window">Избранные</string>
+    <string name="properties_label">Характеристики</string>
+    <string name="ebc_label">EBC</string>
+    <string name="srm_label">SRM</string>
+    <string name="ph_label">PH</string>
+    <string name="attenuation_level_label">Уровень аттенюации</string>
+    <string name="boil_volume_label">Уровень кипячения</string>
+    <string name="ibu_label">IBU</string>
+    <string name="food_pairing_label">Сочетание с едой</string>
+    <string name="properties_button_label">Показать характеристики</string>
 </resources>

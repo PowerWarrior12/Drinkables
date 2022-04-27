@@ -9,9 +9,9 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.drinkables.R
 import com.example.drinkables.databinding.ActivityMainBinding
 import com.example.drinkables.presentation.DrinksApplication
+import com.example.drinkables.presentation.navigation.DialogNavigator
 import com.github.terrakok.cicerone.Navigator
 import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.github.terrakok.cicerone.androidx.FragmentScreen
 import javax.inject.Inject
 
@@ -29,12 +29,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private val navigator: Navigator =
-        object : AppNavigator(this, R.id.container, supportFragmentManager) {
+        object : DialogNavigator(this, R.id.container, supportFragmentManager) {
             override fun setupFragmentTransaction(
                 screen: FragmentScreen,
                 fragmentTransaction: FragmentTransaction,
                 currentFragment: Fragment?,
-                nextFragment: Fragment
+                nextFragment: Fragment,
             ) {
                 if (currentFragment != null)
                     fragmentTransaction.setCustomAnimations(

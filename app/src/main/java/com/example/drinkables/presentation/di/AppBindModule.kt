@@ -8,6 +8,7 @@ import com.example.drinkables.data.repositories.DrinksRepository
 import com.example.drinkables.data.repositories.DrinksRepositoryImpl
 import com.example.drinkables.data.repositories.FavouriteDrinksRepository
 import com.example.drinkables.domain.entities.Drink
+import com.example.drinkables.domain.entities.PropertyModel
 import dagger.Binds
 import dagger.Module
 
@@ -15,31 +16,36 @@ import dagger.Module
 abstract class AppBindModule {
     @Binds
     abstract fun bindDrinkRepository(
-        drinksRepository: DrinksRepositoryImpl
+        drinksRepository: DrinksRepositoryImpl,
     ): DrinksRepository
 
     @Binds
     abstract fun bindFavouriteDrinkRepository(
-        drinksRepository: DrinksRepositoryImpl
+        drinksRepository: DrinksRepositoryImpl,
     ): FavouriteDrinksRepository
 
     @Binds
     abstract fun bindDrinkViewEntityMapper(
-        drinksViewEntityMapper: DrinkMapper
+        drinksViewEntityMapper: DrinkMapper,
     ): EntityMapper<DrinksResponse, Drink>
 
     @Binds
     abstract fun bindDrinkDetailedViewEntityMapper(
-        drinkDetailedViewEntityMapper: DrinkDetailedMapper
+        drinkDetailedViewEntityMapper: DrinkDetailedMapper,
     ): EntityMapper<DrinkResponse, Drink>
 
     @Binds
     abstract fun bindDrinkToDrinkEntityMapper(
-        drinkToDrinkEntityMapper: DrinkToDrinkEntityMapper
+        drinkToDrinkEntityMapper: DrinkToDrinkEntityMapper,
     ): EntityMapper<Drink, DrinkEntity>
 
     @Binds
     abstract fun bindDrinkEntityToDrinkMapper(
-        drinkEntityToDrinkMapper: DrinkEntityToDrinkMapper
+        drinkEntityToDrinkMapper: DrinkEntityToDrinkMapper,
     ): EntityMapper<DrinkEntity, Drink>
+
+    @Binds
+    abstract fun bindDrinkToDrinkPropertiesMapper(
+        drinkToDrinkPropertyValuesMapper: DrinkToDrinkPropertyValuesMapper,
+    ): EntityMapper<Drink, List<PropertyModel>>
 }
