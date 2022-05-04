@@ -15,8 +15,7 @@ data class Drink(
     val attenuationLevel: Float = 0.0f,
     val boilVolume: BoilVolume = BoilVolume(),
     val foodPairing: List<String> = listOf(),
-
-    ) : Serializable
+) : Serializable
 
 data class BoilVolume(
     val value: Float = 0.0f,

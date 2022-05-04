@@ -22,8 +22,7 @@ class PropertyDrinkViewModel(
     class PropertyDrinkViewModelFactory @AssistedInject constructor(
         @Assisted private val drink: Drink,
         private val drinkToDrinkPropertyValuesMapper: EntityMapper<Drink, List<PropertyModel>>,
-    ) :
-        ViewModelProvider.NewInstanceFactory() {
+    ) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return PropertyDrinkViewModel(drink, drinkToDrinkPropertyValuesMapper) as T
         }

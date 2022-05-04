@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -19,19 +18,19 @@ import com.example.drinkables.HEART_BUTTON_DURATION
 import com.example.drinkables.R
 import com.example.drinkables.databinding.FragmentDrinkDetailedBinding
 import com.example.drinkables.domain.entities.Drink
-import com.example.drinkables.domain.entities.PropertyModel
 import com.example.drinkables.presentation.DrinksApplication
-import com.example.drinkables.presentation.drinkDetailed.drinkProperties.PropertyTitleAdapter
-import com.example.drinkables.presentation.drinkDetailed.drinkProperties.PropertyValueAdapter
+import com.example.drinkables.presentation.drinkDetailed.drinkProperties.PropertyModelDiffCallback
+import com.example.drinkables.presentation.drinkDetailed.drinkProperties.propertyAdapterDelegate
+import com.example.drinkables.presentation.drinkDetailed.drinkProperties.propertyTitleAdapterDelegate
 import com.example.drinkables.presentation.drinksList.DrinksListFragment
 import com.example.drinkables.presentation.mainActivity.MainActivity
-import com.example.drinkables.utils.customAdapter.CompositeDelegateAdapter
 import com.example.drinkables.utils.setImageByUrl
 import com.example.drinkables.utils.views.ViewSlideDirection
 import com.example.drinkables.utils.views.setVisibility
 import com.example.drinkables.utils.views.slideHorizontal
 import com.example.drinkables.utils.views.startJellyAnimation
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import javax.inject.Inject
 
 private const val DRINK_ID = "drinkId"
@@ -57,17 +56,11 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
         BottomSheetBehavior.from(binding.bottomSheetProperties.root)
     }
 
-    private val propertiesAdapter = CompositeDelegateAdapter.Builder<PropertyModel>(object :
-        DiffUtil.ItemCallback<PropertyModel>() {
-        override fun areItemsTheSame(oldItem: PropertyModel, newItem: PropertyModel) =
-            oldItem == newItem
-
-        override fun areContentsTheSame(oldItem: PropertyModel, newItem: PropertyModel) =
-            oldItem == newItem
-    })
-        .addAdapter(PropertyValueAdapter())
-        .addAdapter(PropertyTitleAdapter())
-        .build()
+    private val propertiesAdapter = AsyncListDifferDelegationAdapter(
+        PropertyModelDiffCallback,
+        propertyAdapterDelegate(),
+        propertyTitleAdapterDelegate()
+    )
 
     @Inject
     lateinit var drinkDetailedViewModelFactory: DrinkDetailedViewModel.DrinkDetailedViewModelFactory.Factory
@@ -89,9 +82,10 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
             heartButton.setOnClickListener {
                 drinkViewModel.changeFavouriteDrink()
                 setFragmentResult(
-                    DrinksListFragment.RESULT_KEY,
-                    bundleOf(DrinksListFragment.DRINK_ID to drinkId,
-                        DrinksListFragment.IS_FAVOURITE_CHANGED to drinkViewModel.isFavouriteChanged)
+                    DrinksListFragment.RESULT_KEY, bundleOf(
+                        DrinksListFragment.DRINK_ID to drinkId,
+                        DrinksListFragment.IS_FAVOURITE_CHANGED to drinkViewModel.isFavouriteChanged
+                    )
                 )
                 heartButton.startJellyAnimation(
                     HEART_BUTTON_DURATION,
@@ -117,26 +111,24 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
 
     private fun initBottomSheet() {
         binding.bottomSheetProperties.apply {
-            when (resources.configuration.orientation) {
-                Configuration.ORIENTATION_LANDSCAPE -> root.isVisible = false
-                else -> {
-                    propertiesRecyclerView.apply {
-                        layoutManager = LinearLayoutManager(requireContext())
-                        adapter = propertiesAdapter
-                        val decoration =
-                            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-                        addItemDecoration(decoration)
-                    }
-                    propertiesSheetBehaviour.addBottomSheetCallback(object :
-                        BottomSheetBehavior.BottomSheetCallback() {
-                        override fun onStateChanged(bottomSheet: View, newState: Int) {
-                        }
-
-                        override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                            labelProperties.slideHorizontal(0, ViewSlideDirection.Left, slideOffset)
-                        }
-                    })
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                root.isVisible = false
+            } else {
+                propertiesRecyclerView.apply {
+                    layoutManager = LinearLayoutManager(requireContext())
+                    adapter = this@DrinkDetailedFragment.propertiesAdapter
+                    val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+                    addItemDecoration(decoration)
                 }
+                propertiesSheetBehaviour.addBottomSheetCallback(object :
+                    BottomSheetBehavior.BottomSheetCallback() {
+                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    }
+
+                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                        labelProperties.slideHorizontal(0, ViewSlideDirection.Left, slideOffset)
+                    }
+                })
             }
         }
     }
@@ -155,8 +147,7 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
             binding.apply {
                 drinkDetailedContent.progressBar.isVisible = isLoading
                 toolbarDetailed.heartButton.isVisible = !isLoading
-                drinkDetailedContent.motionContainer.getTransition(R.id.my_transition)?.isEnabled =
-                    !isLoading
+                drinkDetailedContent.motionContainer.getTransition(R.id.my_transition)?.isEnabled = !isLoading
             }
         }
 
@@ -165,27 +156,24 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
             binding.apply {
                 drinkDetailedContent.errorLayout.group.isVisible = isError
                 toolbarDetailed.heartButton.isVisible = !isError
-                drinkDetailedContent.motionContainer.getTransition(R.id.my_transition)?.isEnabled =
-                    !isError
+                drinkDetailedContent.motionContainer.getTransition(R.id.my_transition)?.isEnabled = !isError
             }
         }
 
         drinkViewModel.drinkPropertiesLiveData.observe(
             viewLifecycleOwner,
-            propertiesAdapter::submitList
+            this.propertiesAdapter::setItems
         )
     }
 
     private fun fillDrinkData(drink: Drink) {
         binding.apply {
             setHeartButtonBackground(drink)
-            drink.apply {
-                drinkDetailedContent.apply {
-                    drinkDescriptionText.text = description
-                    toolbarDetailed.toolbar.title = title
-                    imageUrl?.let {
-                        drinkImage.setImageByUrl(imageUrl)
-                    }
+            toolbarDetailed.toolbar.title = drink.title
+            drinkDetailedContent.apply {
+                drinkDescriptionText.text = drink.description
+                drink.imageUrl?.let {
+                    drinkImage.setImageByUrl(drink.imageUrl)
                 }
             }
         }

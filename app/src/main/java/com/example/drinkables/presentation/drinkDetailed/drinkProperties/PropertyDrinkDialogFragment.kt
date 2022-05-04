@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -16,8 +15,8 @@ import com.example.drinkables.databinding.PropertyDrinkDialogFragmentBinding
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.entities.PropertyModel
 import com.example.drinkables.presentation.DrinksApplication
-import com.example.drinkables.utils.customAdapter.CompositeDelegateAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import javax.inject.Inject
 
 const val DRINK_KEY = "drink_key"
@@ -35,17 +34,10 @@ class PropertyDrinkDialogFragment : BottomSheetDialogFragment() {
     private val propertyDrinkViewModel by viewModels<PropertyDrinkViewModel> {
         propertyViewModelFactory.create(drink)
     }
-    private val propertiesAdapter = CompositeDelegateAdapter.Builder<PropertyModel>(object :
-        DiffUtil.ItemCallback<PropertyModel>() {
-        override fun areItemsTheSame(oldItem: PropertyModel, newItem: PropertyModel) =
-            oldItem == newItem
-
-        override fun areContentsTheSame(oldItem: PropertyModel, newItem: PropertyModel) =
-            oldItem == newItem
-    })
-        .addAdapter(PropertyValueAdapter())
-        .addAdapter(PropertyTitleAdapter())
-        .build()
+    private val propertiesAdapter = AsyncListDifferDelegationAdapter<PropertyModel>(PropertyModelDiffCallback,
+        propertyAdapterDelegate(),
+        propertyTitleAdapterDelegate()
+    )
 
     override fun onAttach(context: Context) {
         DrinksApplication.INSTANCE.appComponent.inject(this)
@@ -81,7 +73,7 @@ class PropertyDrinkDialogFragment : BottomSheetDialogFragment() {
     private fun observeData() {
         propertyDrinkViewModel.drinkLiveData.observe(
             viewLifecycleOwner,
-            propertiesAdapter::submitList
+            propertiesAdapter::setItems
         )
     }
 

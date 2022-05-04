@@ -54,8 +54,7 @@ class DrinkDetailedViewModel(
                     result.data.let { drink ->
                         val updateDrink = updateDrinkFavouriteInteractor.run(drink)
                         drinkDetailedLiveData.postValue(updateDrink)
-                        drinkPropertiesLiveData.postValue(drinkToDrinkPropertyValuesMapper.mapEntity(
-                            drink))
+                        drinkPropertiesLiveData.postValue(drinkToDrinkPropertyValuesMapper.mapEntity(drink))
                     }
                 }
             }
@@ -80,8 +79,9 @@ class DrinkDetailedViewModel(
     }
 
     fun onPropertiesButtonClick() {
-        router.showDialog(Screens.propertyDrinkDialogFragment(drinkDetailedLiveData.value
-            ?: Drink()))
+        drinkDetailedLiveData.value?.let { drink ->
+            router.showDialog(Screens.propertyDrinkDialogFragment(drink))
+        }
     }
 
     class DrinkDetailedViewModelFactory @AssistedInject constructor(

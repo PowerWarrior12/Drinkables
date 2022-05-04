@@ -85,6 +85,11 @@ dependencies {
     def material_version = "1.5.0"
     implementation "com.google.android.material:material:$material_version"
 
+    //Delegate adapter
+    def delegate_adapter_version = "4.3.2"
+    implementation "com.hannesdorfmann:adapterdelegates4-kotlin-dsl:$delegate_adapter_version"
+    implementation "com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding:$delegate_adapter_version"
+
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
