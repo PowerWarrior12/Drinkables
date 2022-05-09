@@ -19,7 +19,7 @@ fun View.startJellyAnimation(duration: Long, scale: Float) {
     val heightAnimator = ObjectAnimator.ofFloat(this, View.SCALE_Y, newScale).setDuration(duration)
     val setAnimator = AnimatorSet()
     val view = this
-    with(setAnimator){
+    with(setAnimator) {
         this.duration = duration
         playTogether(widthAnimator, heightAnimator)
         addListener(
@@ -40,4 +40,22 @@ fun View.startJellyAnimation(duration: Long, scale: Float) {
             })
         start()
     }
+}
+
+fun View.slideHorizontal(duration: Long, direction: ViewSlideDirection, offset: Float) {
+    val newPosition = this.width * direction.value * offset * 1.1f
+    animate().x(newPosition).setDuration(duration).start()
+}
+
+enum class ViewSlideDirection(val value: Int) {
+
+    Left(-1) {
+        override fun reverse() = Right
+    },
+    Right(1) {
+        override fun reverse() = Left
+    };
+
+    abstract fun reverse(): ViewSlideDirection
+
 }

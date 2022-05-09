@@ -1,6 +1,8 @@
-package com.example.drinkables.presentation
+package com.example.drinkables.presentation.navigation
 
+import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.presentation.drinkDetailed.DrinkDetailedFragment
+import com.example.drinkables.presentation.drinkDetailed.drinkProperties.PropertyDrinkDialogFragment
 import com.example.drinkables.presentation.drinksFavorite.FavouritesListFragment
 import com.example.drinkables.presentation.drinksList.DrinksListFragment
 import com.github.terrakok.cicerone.androidx.FragmentScreen
@@ -16,5 +18,9 @@ object Screens {
 
     fun favouritesListFragment() = FragmentScreen {
         FavouritesListFragment.newInstance()
+    }
+
+    fun propertyDrinkDialogFragment(drink: Drink) = DialogScreen {
+        PropertyDrinkDialogFragment.newInstance(drink)
     }
 }

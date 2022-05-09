@@ -8,7 +8,7 @@ import androidx.paging.cachedIn
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.interactors.ChangeFavouriteDrinkInteractor
 import com.example.drinkables.domain.interactors.LoadPagingDrinksInteractor
-import com.example.drinkables.presentation.Screens
+import com.example.drinkables.presentation.navigation.Screens
 import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class DrinksListViewModel(
     private val changeFavouriteDrinkInteractor: ChangeFavouriteDrinkInteractor,
     private val loadPagingDrinksInteractor: LoadPagingDrinksInteractor,
-    private val router: Router
+    private val router: Router,
 ) : ViewModel() {
     var drinksFlow: Flow<PagingData<Drink>>
 
@@ -48,7 +48,7 @@ class DrinksListViewModel(
     class DrinksListViewModelFactory @Inject constructor(
         private val changeFavouriteDrinkInteractor: ChangeFavouriteDrinkInteractor,
         private val loadPagingDrinksInteractor: LoadPagingDrinksInteractor,
-        private val router: Router
+        private val router: Router,
     ) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return DrinksListViewModel(

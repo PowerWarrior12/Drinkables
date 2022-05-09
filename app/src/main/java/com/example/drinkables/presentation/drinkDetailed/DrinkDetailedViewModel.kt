@@ -5,12 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.drinkables.data.mappers.EntityMapper
 import com.example.drinkables.domain.common.Result
 import com.example.drinkables.domain.entities.Drink
+import com.example.drinkables.domain.entities.PropertyModel
 import com.example.drinkables.domain.interactors.ChangeFavouriteDrinkInteractor
 import com.example.drinkables.domain.interactors.LoadDrinkDetailedInteractor
 import com.example.drinkables.domain.interactors.UpdateDrinkFavouriteInteractor
-import com.github.terrakok.cicerone.Router
+import com.example.drinkables.presentation.navigation.DialogRouter
+import com.example.drinkables.presentation.navigation.Screens
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -22,13 +25,16 @@ class DrinkDetailedViewModel(
     private val loadDrinkDetailedInteractor: LoadDrinkDetailedInteractor,
     private val changeFavouriteDrinkInteractor: ChangeFavouriteDrinkInteractor,
     private val updateDrinkFavouriteInteractor: UpdateDrinkFavouriteInteractor,
-    private val router: Router,
-    private val drinkId: Int
+    private val drinkToDrinkPropertyValuesMapper: EntityMapper<Drink, List<PropertyModel>>,
+    private val router: DialogRouter,
+    private val drinkId: Int,
 ) : ViewModel() {
 
     val drinkDetailedLiveData = MutableLiveData<Drink>()
+    val drinkPropertiesLiveData = MutableLiveData<List<PropertyModel>>()
     val loadDrinkLiveData = MutableLiveData<Boolean>(false)
     val errorDrinkLiveData = MutableLiveData<Boolean>(false)
+    var isFavouriteChanged: Boolean = false
 
     init {
         getDrinkDetailed()
@@ -48,6 +54,7 @@ class DrinkDetailedViewModel(
                     result.data.let { drink ->
                         val updateDrink = updateDrinkFavouriteInteractor.run(drink)
                         drinkDetailedLiveData.postValue(updateDrink)
+                        drinkPropertiesLiveData.postValue(drinkToDrinkPropertyValuesMapper.mapEntity(drink))
                     }
                 }
             }
@@ -63,6 +70,7 @@ class DrinkDetailedViewModel(
     }
 
     fun changeFavouriteDrink() {
+        isFavouriteChanged = !isFavouriteChanged
         viewModelScope.launch {
             drinkDetailedLiveData.value?.let { drink ->
                 drinkDetailedLiveData.postValue(changeFavouriteDrinkInteractor.run(drink))
@@ -70,12 +78,19 @@ class DrinkDetailedViewModel(
         }
     }
 
+    fun onPropertiesButtonClick() {
+        drinkDetailedLiveData.value?.let { drink ->
+            router.showDialog(Screens.propertyDrinkDialogFragment(drink))
+        }
+    }
+
     class DrinkDetailedViewModelFactory @AssistedInject constructor(
         private val loadDrinkDetailedInteractor: LoadDrinkDetailedInteractor,
         private val changeFavouriteDrinkInteractor: ChangeFavouriteDrinkInteractor,
         private val updateDrinkFavouriteInteractor: UpdateDrinkFavouriteInteractor,
-        private val router: Router,
-        @Assisted private val drinkId: Int
+        private val drinkToDrinkPropertyValuesMapper: EntityMapper<Drink, List<PropertyModel>>,
+        private val router: DialogRouter,
+        @Assisted private val drinkId: Int,
     ) :
         ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -83,6 +98,7 @@ class DrinkDetailedViewModel(
                 loadDrinkDetailedInteractor,
                 changeFavouriteDrinkInteractor,
                 updateDrinkFavouriteInteractor,
+                drinkToDrinkPropertyValuesMapper,
                 router,
                 drinkId
             ) as T
@@ -90,7 +106,7 @@ class DrinkDetailedViewModel(
 
         @AssistedFactory
         interface Factory {
-            fun create(@Assisted drinkId: Int): DrinkDetailedViewModel.DrinkDetailedViewModelFactory
+            fun create(@Assisted drinkId: Int): DrinkDetailedViewModelFactory
         }
     }
 }
