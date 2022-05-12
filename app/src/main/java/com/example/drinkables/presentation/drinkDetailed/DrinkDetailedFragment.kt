@@ -19,13 +19,12 @@ import com.example.drinkables.R
 import com.example.drinkables.databinding.FragmentDrinkDetailedBinding
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.presentation.DrinksApplication
-import com.example.drinkables.presentation.drinkDetailed.drinkProperties.PropertyModelDiffCallback
-import com.example.drinkables.presentation.drinkDetailed.drinkProperties.propertyAdapterDelegate
-import com.example.drinkables.presentation.drinkDetailed.drinkProperties.propertyTitleAdapterDelegate
+import com.example.drinkables.presentation.drinkDetailed.drinkProperties.*
 import com.example.drinkables.presentation.drinksList.DrinksListFragment
 import com.example.drinkables.presentation.mainActivity.MainActivity
 import com.example.drinkables.utils.setImageByUrl
 import com.example.drinkables.utils.views.ViewSlideDirection
+import com.example.drinkables.utils.views.customViews.RatingView
 import com.example.drinkables.utils.views.setVisibility
 import com.example.drinkables.utils.views.slideHorizontal
 import com.example.drinkables.utils.views.startJellyAnimation
@@ -59,7 +58,13 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
     private val propertiesAdapter = AsyncListDifferDelegationAdapter(
         PropertyModelDiffCallback,
         propertyAdapterDelegate(),
-        propertyTitleAdapterDelegate()
+        propertyTitleAdapterDelegate(),
+        propertyRatingAdapterDelegate(object : RatingView.OnItemClickListener {
+            override fun onItemClick(rating: Int) {
+                drinkViewModel.onRatingChanged(rating)
+            }
+        }),
+        propertyIndicatorAdapterDelegate()
     )
 
     @Inject

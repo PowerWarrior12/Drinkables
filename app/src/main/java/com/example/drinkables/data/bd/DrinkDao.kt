@@ -23,4 +23,14 @@ interface DrinkDao {
 
     @Delete
     suspend fun deleteFavouriteDrink(drink: DrinkEntity)
+
+    @Insert
+    suspend fun addDrinkRating(drinkRating: DrinksRatingEntity)
+
+    @Update
+    suspend fun updateDrinkRating(drinkRating: DrinksRatingEntity)
+
+    @Transaction
+    @Query("SELECT * FROM drink_rating WHERE :id = id")
+    fun getDrinkRating(id: Int): Flow<DrinksRatingEntity?>
 }
