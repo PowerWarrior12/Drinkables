@@ -20,10 +20,6 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     View(context, attrs, defStyleAttr) {
 
     // region Attributes
-    private val iconId: Int
-    private val defaultColor: Int
-    private val selectedColor: Int
-    private var _value: Int
     var value: Int
         get() = _value
         set(v) {
@@ -31,29 +27,20 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             statusPosition = calculateStatusPosition
             invalidate()
         }
+    private val iconId: Int
+    private val defaultColor: Int
+    private val selectedColor: Int
+    private var _value: Int
+
     private val itemSize: Int
     private val itemsIndent: Int
     private val itemsCount: Int
 
-    init {
-        setLayerType(LAYER_TYPE_SOFTWARE, null)
-        with(context.obtainStyledAttributes(attrs, R.styleable.customView)) {
-            defaultColor = getColor(R.styleable.customView_default_color, DEFAULT_COLOR)
-            selectedColor = getColor(R.styleable.customView_selected_color, DEFAULT_SELECTED_COLOR)
-            _value = getInteger(R.styleable.customView_value, DEFAULT_VALUE)
-            itemSize = getDimension(R.styleable.customView_item_size, DEFAULT_ITEM_SIZE.toFloat()).toInt()
-            itemsIndent = getDimension(R.styleable.customView_items_indent, DEFAULT_ITEMS_INDENT.toFloat()).toInt()
-            itemsCount = getInteger(R.styleable.customView_items_count, DEFAULT_ITEMS_COUNT)
-            iconId = getResourceId(R.styleable.customView_view_icon, DEFAULT_ICON)
-        }
-    }
-
-    // endregion
     // region Tools
     // region Transformations
     private val rectView by lazy { Rect(0, 0, width, height) }
 
-    private val markItems = createMarkItemsUI()
+    private val markItems: Map<Int, MarkItemUI>
 
     private val calculateViewWidth
         get() = (itemSize + itemsIndent) * itemsCount - itemsIndent
@@ -84,6 +71,27 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private val statusPorterDuffMode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
 
     //endregion
+
+    init {
+        setLayerType(LAYER_TYPE_SOFTWARE, null)
+        context.obtainStyledAttributes(attrs, R.styleable.customView).apply {
+            try {
+                defaultColor = getColor(R.styleable.customView_default_color, DEFAULT_COLOR)
+                selectedColor = getColor(R.styleable.customView_selected_color, DEFAULT_SELECTED_COLOR)
+                _value = getInteger(R.styleable.customView_value, DEFAULT_VALUE)
+                itemSize = getDimension(R.styleable.customView_item_size, DEFAULT_ITEM_SIZE.toFloat()).toInt()
+                itemsIndent = getDimension(R.styleable.customView_items_indent, DEFAULT_ITEMS_INDENT.toFloat()).toInt()
+                itemsCount = getInteger(R.styleable.customView_items_count, DEFAULT_ITEMS_COUNT)
+                iconId = getResourceId(R.styleable.customView_view_icon, DEFAULT_ICON)
+            } finally {
+                recycle()
+            }
+            markItems = createMarkItemsUI()
+        }
+    }
+
+    // endregion
+
     // region Overrides
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = calculateDefaultSize(calculateViewWidth, widthMeasureSpec)
@@ -107,16 +115,20 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         event ?: return false
-        return if (event.pointerCount == 1) handleClick(event)
-        else false
+        return handleClick(event)
+    }
+
+    fun addOnItemClickListener(callback: OnItemClickListener) {
+        onItemClickListener = callback
     }
 
     //endregion
     //region Prepare bitmaps
     private fun prepareIconsBitmap() {
         val x = rectView
-        if (iconsBitmap.isRecycled)
+        if (iconsBitmap.isRecycled) {
             iconsBitmap.recycle()
+        }
         iconsBitmap.applyCanvas {
             markItems.forEach { (_, markItemUI) ->
                 markItemUI.drawItem(this, iconsPaint)
@@ -125,8 +137,9 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     private fun prepareStatusBitmap() {
-        if (statusBitmap.isRecycled)
+        if (statusBitmap.isRecycled) {
             statusBitmap.recycle()
+        }
         statusBitmap.applyCanvas {
             statusPaint.color = selectedColor
             drawRect(0f, 0f, statusPosition.toFloat(), height.toFloat(), statusPaint)
@@ -139,12 +152,11 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     //endregion
     //region Calculating functions
     private fun getIndexByXPosition(position: Int): Int {
-        val index = (position / (itemSize + itemsIndent)).toBigDecimal().setScale(0, RoundingMode.DOWN).toInt()
-        return index
+        return (position / (itemSize + itemsIndent)).toBigDecimal().setScale(0, RoundingMode.DOWN).toInt()
     }
 
     private fun calculateDurationForStatus(): Long {
-        return STATUS_ANIMATION_DURATION / (width - abs(calculateStatusPosition - statusPosition))
+        return STATUS_ANIMATION_DURATION / (2 * width - abs(calculateStatusPosition - statusPosition))
     }
 
     private fun calculateDefaultSize(calculatingSize: Int, measureSpec: Int): Int {
@@ -162,24 +174,21 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     //endregion
     private fun handleClick(event: MotionEvent): Boolean {
-        return when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                val xPosition = event.x
-                val index = getIndexByXPosition(xPosition.toInt())
+        return if (event.pointerCount == 1 && event.action == MotionEvent.ACTION_DOWN) {
+            val xPosition = event.x
+            val index = getIndexByXPosition(xPosition.toInt())
 
-                if (markItems.containsKey(index)) {
-                    val markItem = markItems[index]!!
-                    if (markItem.isCurrentPoint(xPosition.toInt())) {
-                        _value = index + 1
-                        onItemClickListener.onItemClick(_value)
-                        val animator = prepareChangeStatusAnimator(calculateDurationForStatus())
-                        animator.start()
-                    }
+            if (markItems.containsKey(index)) {
+                val markItem = markItems[index]!!
+                if (markItem.isCurrentPoint(xPosition.toInt())) {
+                    _value = index + 1
+                    onItemClickListener.onItemClick(_value)
+                    val animator = prepareChangeStatusAnimator(calculateDurationForStatus())
+                    animator.start()
                 }
-                false
             }
-            else -> false
-        }
+            false
+        } else false
     }
 
     private fun createMarkItemsUI(): Map<Int, MarkItemUI> {
@@ -206,8 +215,8 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         return animator
     }
 
-    fun addOnItemClickListener(callback: OnItemClickListener) {
-        onItemClickListener = callback
+    fun interface OnItemClickListener {
+        fun onItemClick(rating: Int)
     }
 
     /**
@@ -232,10 +241,6 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 bottom = itemSize
             }
         }
-    }
-
-    interface OnItemClickListener {
-        fun onItemClick(rating: Int)
     }
 
     companion object {

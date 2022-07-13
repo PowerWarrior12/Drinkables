@@ -13,4 +13,5 @@
     <string name="ibu_label">IBU</string>
     <string name="food_pairing_label">Сочетание с едой</string>
     <string name="properties_button_label">Показать характеристики</string>
+    <string name="positive_button">OK</string>
 </resources>

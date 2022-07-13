@@ -35,7 +35,7 @@ class DrinkDetailedViewModel(
     val drinkDetailedLiveData = MutableLiveData<Drink>()
     val drinkPropertiesLiveData = MutableLiveData<MutableList<PropertyModel>>()
     val loadDrinkLiveData = MutableLiveData<Boolean>(false)
-    val errorDrinkLiveData = MutableLiveData<Boolean>(false)
+    val fatalErrorDrinkLiveData = MutableLiveData<Boolean>(false)
     var isFavouriteChanged: Boolean = false
 
     init {
@@ -50,7 +50,7 @@ class DrinkDetailedViewModel(
             when (result) {
                 is Result.Error -> {
                     Log.d(TAG, result.exception.message ?: "")
-                    errorDrinkLiveData.postValue(true)
+                    fatalErrorDrinkLiveData.postValue(true)
                 }
                 is Result.Success -> {
                     result.data.let { drink ->
@@ -64,7 +64,7 @@ class DrinkDetailedViewModel(
     }
 
     fun reloadDrinkDetailed() {
-        errorDrinkLiveData.postValue(false)
+        fatalErrorDrinkLiveData.postValue(false)
     }
 
     fun openBackView() {
@@ -115,7 +115,9 @@ class DrinkDetailedViewModel(
                     drinkPropertiesLiveData.value?.indexOf(drinkPropertiesLiveData.value?.find { it is PropertyModel.PropertyRatingModel })
                 ratingPropertyIndex?.let { drinkPropertiesLiveData.value?.set(it, resultRating.data) }
             } else if (resultRating is Result.Error) {
-                Log.d(TAG, resultRating.exception.message.toString())
+                val errorMessage = resultRating.exception.message.toString()
+                router.showDialog(Screens.errorDialogFragment(errorMessage))
+                Log.d(TAG, errorMessage)
             }
         }
     }

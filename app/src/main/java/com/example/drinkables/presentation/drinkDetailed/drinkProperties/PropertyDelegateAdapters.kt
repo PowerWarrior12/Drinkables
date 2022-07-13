@@ -43,6 +43,5 @@ fun propertyIndicatorAdapterDelegate() =
         bind {
             binding.root.value = item.value
             binding.root.maxValue = item.maxValue
-            //binding.root.restartAnimations()
         }
     }

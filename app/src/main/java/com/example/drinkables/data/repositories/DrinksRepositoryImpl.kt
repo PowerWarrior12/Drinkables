@@ -1,5 +1,6 @@
 package com.example.drinkables.data.repositories
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -15,6 +16,7 @@ import com.example.drinkables.domain.common.Result
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.entities.PropertyModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import javax.inject.Inject
@@ -131,6 +133,6 @@ class DrinksRepositoryImpl @Inject constructor(
     }
 
     override suspend fun checkDrinkRating(id: Int): Boolean {
-        return drinkDB.drinkDao().getDrinkRating(id) != null
+        return drinkDB.drinkDao().getDrinkRating(id).first() != null
     }
 }

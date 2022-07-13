@@ -24,12 +24,10 @@ import com.example.drinkables.presentation.drinksList.DrinksListFragment
 import com.example.drinkables.presentation.mainActivity.MainActivity
 import com.example.drinkables.utils.setImageByUrl
 import com.example.drinkables.utils.views.ViewSlideDirection
-import com.example.drinkables.utils.views.customViews.RatingView
 import com.example.drinkables.utils.views.setVisibility
 import com.example.drinkables.utils.views.slideHorizontal
 import com.example.drinkables.utils.views.startJellyAnimation
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import javax.inject.Inject
 
 private const val DRINK_ID = "drinkId"
@@ -55,17 +53,9 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
         BottomSheetBehavior.from(binding.bottomSheetProperties.root)
     }
 
-    private val propertiesAdapter = AsyncListDifferDelegationAdapter(
-        PropertyModelDiffCallback,
-        propertyAdapterDelegate(),
-        propertyTitleAdapterDelegate(),
-        propertyRatingAdapterDelegate(object : RatingView.OnItemClickListener {
-            override fun onItemClick(rating: Int) {
-                drinkViewModel.onRatingChanged(rating)
-            }
-        }),
-        propertyIndicatorAdapterDelegate()
-    )
+    private val propertiesAdapter = PropertyAdapter { rating ->
+        drinkViewModel.onRatingChanged(rating)
+    }
 
     @Inject
     lateinit var drinkDetailedViewModelFactory: DrinkDetailedViewModel.DrinkDetailedViewModelFactory.Factory
@@ -156,7 +146,7 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
             }
         }
 
-        drinkViewModel.errorDrinkLiveData.observe(viewLifecycleOwner) { isError ->
+        drinkViewModel.fatalErrorDrinkLiveData.observe(viewLifecycleOwner) { isError ->
             Log.d(TAG, "Changing the error state")
             binding.apply {
                 drinkDetailedContent.errorLayout.group.isVisible = isError

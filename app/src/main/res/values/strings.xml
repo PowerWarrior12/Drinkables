@@ -13,4 +13,5 @@
     <string name="ibu_label">IBU</string>
     <string name="food_pairing_label">Food pairing</string>
     <string name="properties_button_label">Show properties</string>
+    <string name="positive_button">OK</string>
 </resources>
