@@ -30,9 +30,9 @@ fun propertyRatingAdapterDelegate(callback: RatingView.OnItemClickListener) =
     adapterDelegateViewBinding<PropertyModel.PropertyRatingModel, PropertyModel, DrinkPropertyRatingItemBinding>(
         { layoutInflater, root -> DrinkPropertyRatingItemBinding.inflate(layoutInflater, root, false) }
     ) {
+        binding.root.addOnItemClickListener(callback)
         bind {
             binding.root.value = item.value
-            binding.root.addOnItemClickListener(callback)
         }
     }
 

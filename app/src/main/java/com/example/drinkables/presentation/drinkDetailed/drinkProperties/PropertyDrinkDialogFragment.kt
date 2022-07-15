@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -17,7 +16,6 @@ import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.entities.PropertyModel
 import com.example.drinkables.presentation.DrinksApplication
 import com.example.drinkables.presentation.drinkDetailed.DrinkDetailedViewModel
-import com.example.drinkables.utils.views.customViews.RatingView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import javax.inject.Inject
@@ -37,14 +35,13 @@ class PropertyDrinkDialogFragment : BottomSheetDialogFragment() {
     private val propertyDrinkViewModel by viewModels<DrinkDetailedViewModel> {
         propertyViewModelFactory.create(drink.id)
     }
-    private val propertiesAdapter = AsyncListDifferDelegationAdapter<PropertyModel>(PropertyModelDiffCallback,
+    private val propertiesAdapter = AsyncListDifferDelegationAdapter<PropertyModel>(
+        PropertyModelDiffCallback,
         propertyAdapterDelegate(),
         propertyTitleAdapterDelegate(),
-        propertyRatingAdapterDelegate(object : RatingView.OnItemClickListener {
-            override fun onItemClick(rating: Int) {
-                propertyDrinkViewModel.onRatingChanged(rating)
-            }
-        }),
+        propertyRatingAdapterDelegate { rating ->
+            propertyDrinkViewModel.onRatingChanged(rating)
+        },
         propertyIndicatorAdapterDelegate()
     )
 

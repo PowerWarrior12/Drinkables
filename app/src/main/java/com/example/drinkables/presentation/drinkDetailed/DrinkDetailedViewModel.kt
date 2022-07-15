@@ -1,10 +1,7 @@
 package com.example.drinkables.presentation.drinkDetailed
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.drinkables.data.mappers.EntityMapper
 import com.example.drinkables.domain.common.Result
 import com.example.drinkables.domain.entities.Drink
@@ -32,11 +29,18 @@ class DrinkDetailedViewModel(
     private val drinkId: Int,
 ) : ViewModel() {
 
-    val drinkDetailedLiveData = MutableLiveData<Drink>()
-    val drinkPropertiesLiveData = MutableLiveData<MutableList<PropertyModel>>()
-    val loadDrinkLiveData = MutableLiveData<Boolean>(false)
-    val fatalErrorDrinkLiveData = MutableLiveData<Boolean>(false)
+    private val mutableDrinkDetailedLiveData = MutableLiveData<Drink>()
+    private val mutableDrinkPropertiesLiveData = MutableLiveData<MutableList<PropertyModel>>()
+    private val mutableLoadDrinkLiveData = MutableLiveData<Boolean>(false)
+    private val mutableFatalErrorDrinkLiveData = MutableLiveData<Boolean>(false)
+
+    val drinkDetailedLiveData: LiveData<Drink> = mutableDrinkDetailedLiveData
+    val drinkPropertiesLiveData: LiveData<MutableList<PropertyModel>> = mutableDrinkPropertiesLiveData
+    val loadDrinkLiveData: LiveData<Boolean> = mutableLoadDrinkLiveData
+    val fatalErrorDrinkLiveData: LiveData<Boolean> = mutableFatalErrorDrinkLiveData
+
     var isFavouriteChanged: Boolean = false
+        private set
 
     init {
         getDrinkDetailed()
@@ -44,18 +48,18 @@ class DrinkDetailedViewModel(
 
     private fun getDrinkDetailed() {
         viewModelScope.launch {
-            loadDrinkLiveData.postValue(true)
+            mutableLoadDrinkLiveData.postValue(true)
             val result = loadDrinkDetailedInteractor.run(drinkId)
-            loadDrinkLiveData.postValue(false)
+            mutableLoadDrinkLiveData.postValue(false)
             when (result) {
                 is Result.Error -> {
                     Log.d(TAG, result.exception.message ?: "")
-                    fatalErrorDrinkLiveData.postValue(true)
+                    mutableFatalErrorDrinkLiveData.postValue(true)
                 }
                 is Result.Success -> {
                     result.data.let { drink ->
                         val updateDrink = updateDrinkFavouriteInteractor.run(drink)
-                        drinkDetailedLiveData.postValue(updateDrink)
+                        mutableDrinkDetailedLiveData.postValue(updateDrink)
                         loadDrinksProperties(drink)
                     }
                 }
@@ -64,7 +68,7 @@ class DrinkDetailedViewModel(
     }
 
     fun reloadDrinkDetailed() {
-        fatalErrorDrinkLiveData.postValue(false)
+        mutableFatalErrorDrinkLiveData.postValue(false)
     }
 
     fun openBackView() {
@@ -75,13 +79,13 @@ class DrinkDetailedViewModel(
         isFavouriteChanged = !isFavouriteChanged
         viewModelScope.launch {
             drinkDetailedLiveData.value?.let { drink ->
-                drinkDetailedLiveData.postValue(changeFavouriteDrinkInteractor.run(drink))
+                mutableDrinkDetailedLiveData.postValue(changeFavouriteDrinkInteractor.run(drink))
             }
         }
     }
 
     fun onPropertiesButtonClick() {
-        drinkDetailedLiveData.value?.let { drink ->
+        mutableDrinkDetailedLiveData.value?.let { drink ->
             router.showDialog(Screens.propertyDrinkDialogFragment(drink))
         }
     }
@@ -89,7 +93,9 @@ class DrinkDetailedViewModel(
     fun onRatingChanged(rating: Int) {
         viewModelScope.launch {
             val ratingProperty =
-                drinkPropertiesLiveData.value?.find { it is PropertyModel.PropertyRatingModel } as PropertyModel.PropertyRatingModel?
+                drinkPropertiesLiveData.value?.find { property ->
+                    property is PropertyModel.PropertyRatingModel
+                } as PropertyModel.PropertyRatingModel?
             ratingProperty?.let {
                 val ratingPropertyIndex = drinkPropertiesLiveData.value?.indexOf(ratingProperty)
                 ratingPropertyIndex?.let {
@@ -104,7 +110,7 @@ class DrinkDetailedViewModel(
         val properties = drinkToDrinkPropertyValuesMapper.mapEntity(drink).toMutableList()
         val drinkRating = PropertyModel.PropertyRatingModel(drink.id, DEFAULT_RATING)
         properties.add(drinkRating)
-        drinkPropertiesLiveData.postValue(properties)
+        mutableDrinkPropertiesLiveData.postValue(properties)
         loadDrinksRating(drink)
     }
 
@@ -112,8 +118,12 @@ class DrinkDetailedViewModel(
         loadDrinkRatingInteractor.run(drink.id).collect { resultRating ->
             if (resultRating is Result.Success) {
                 val ratingPropertyIndex =
-                    drinkPropertiesLiveData.value?.indexOf(drinkPropertiesLiveData.value?.find { it is PropertyModel.PropertyRatingModel })
-                ratingPropertyIndex?.let { drinkPropertiesLiveData.value?.set(it, resultRating.data) }
+                    drinkPropertiesLiveData.value?.indexOf(drinkPropertiesLiveData.value?.find { property ->
+                        property is PropertyModel.PropertyRatingModel
+                    })
+                ratingPropertyIndex?.let { index ->
+                    drinkPropertiesLiveData.value?.set(index, resultRating.data)
+                }
             } else if (resultRating is Result.Error) {
                 val errorMessage = resultRating.exception.message.toString()
                 router.showDialog(Screens.errorDialogFragment(errorMessage))

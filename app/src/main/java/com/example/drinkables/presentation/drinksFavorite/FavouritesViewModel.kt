@@ -1,9 +1,6 @@
 package com.example.drinkables.presentation.drinksFavorite
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.interactors.LoadDrinksFavouriteInteractor
 import com.example.drinkables.presentation.navigation.Screens
@@ -16,7 +13,8 @@ class FavouritesViewModel(
     private val loadDinkFavouritesInteractor: LoadDrinksFavouriteInteractor,
     private val router: Router,
 ) : ViewModel() {
-    val favouriteDrinksLiveData = MutableLiveData<List<Drink>>()
+    private val mutableFavouriteDrinksLiveData = MutableLiveData<List<Drink>>()
+    val favouriteDrinksLiveData: LiveData<List<Drink>> = mutableFavouriteDrinksLiveData
 
     init {
         getFavouritesDrink()
@@ -25,7 +23,7 @@ class FavouritesViewModel(
     private fun getFavouritesDrink() {
         viewModelScope.launch {
             loadDinkFavouritesInteractor.run().collect { drinks ->
-                favouriteDrinksLiveData.postValue(drinks)
+                mutableFavouriteDrinksLiveData.postValue(drinks)
             }
         }
     }

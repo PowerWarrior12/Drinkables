@@ -106,11 +106,12 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     override fun onDraw(canvas: Canvas?) {
-        canvas!!
-        canvas.drawBitmap(iconsBitmap, null, rectView, iconsPaint)
-        statusPaint.xfermode = statusPorterDuffMode
-        canvas.drawBitmap(statusBitmap, null, rectView, statusPaint)
-        statusPaint.xfermode = null
+        canvas?.let {
+            canvas.drawBitmap(iconsBitmap, null, rectView, iconsPaint)
+            statusPaint.xfermode = statusPorterDuffMode
+            canvas.drawBitmap(statusBitmap, null, rectView, statusPaint)
+            statusPaint.xfermode = null
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -188,7 +189,9 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 }
             }
             false
-        } else false
+        } else {
+            false
+        }
     }
 
     private fun createMarkItemsUI(): Map<Int, MarkItemUI> {

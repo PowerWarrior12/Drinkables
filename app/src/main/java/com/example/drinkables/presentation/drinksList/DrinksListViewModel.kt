@@ -20,6 +20,7 @@ class DrinksListViewModel(
     private val router: Router,
 ) : ViewModel() {
     var drinksFlow: Flow<PagingData<Drink>>
+        private set
 
     init {
         drinksFlow = getPagingDrinks()
