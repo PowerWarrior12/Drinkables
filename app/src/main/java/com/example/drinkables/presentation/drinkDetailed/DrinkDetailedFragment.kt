@@ -19,9 +19,7 @@ import com.example.drinkables.R
 import com.example.drinkables.databinding.FragmentDrinkDetailedBinding
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.presentation.DrinksApplication
-import com.example.drinkables.presentation.drinkDetailed.drinkProperties.PropertyModelDiffCallback
-import com.example.drinkables.presentation.drinkDetailed.drinkProperties.propertyAdapterDelegate
-import com.example.drinkables.presentation.drinkDetailed.drinkProperties.propertyTitleAdapterDelegate
+import com.example.drinkables.presentation.drinkDetailed.drinkProperties.*
 import com.example.drinkables.presentation.drinksList.DrinksListFragment
 import com.example.drinkables.presentation.mainActivity.MainActivity
 import com.example.drinkables.utils.setImageByUrl
@@ -30,7 +28,6 @@ import com.example.drinkables.utils.views.setVisibility
 import com.example.drinkables.utils.views.slideHorizontal
 import com.example.drinkables.utils.views.startJellyAnimation
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import javax.inject.Inject
 
 private const val DRINK_ID = "drinkId"
@@ -56,11 +53,9 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
         BottomSheetBehavior.from(binding.bottomSheetProperties.root)
     }
 
-    private val propertiesAdapter = AsyncListDifferDelegationAdapter(
-        PropertyModelDiffCallback,
-        propertyAdapterDelegate(),
-        propertyTitleAdapterDelegate()
-    )
+    private val propertiesAdapter = PropertyAdapter { rating ->
+        drinkViewModel.onRatingChanged(rating)
+    }
 
     @Inject
     lateinit var drinkDetailedViewModelFactory: DrinkDetailedViewModel.DrinkDetailedViewModelFactory.Factory
@@ -151,7 +146,7 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
             }
         }
 
-        drinkViewModel.errorDrinkLiveData.observe(viewLifecycleOwner) { isError ->
+        drinkViewModel.fatalErrorDrinkLiveData.observe(viewLifecycleOwner) { isError ->
             Log.d(TAG, "Changing the error state")
             binding.apply {
                 drinkDetailedContent.errorLayout.group.isVisible = isError

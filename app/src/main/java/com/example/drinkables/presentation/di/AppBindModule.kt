@@ -4,7 +4,9 @@ import com.example.drinkables.data.api.entities.BoilVolumeResponse
 import com.example.drinkables.data.api.entities.DrinkResponse
 import com.example.drinkables.data.api.entities.DrinksResponse
 import com.example.drinkables.data.bd.DrinkEntity
+import com.example.drinkables.data.bd.DrinksRatingEntity
 import com.example.drinkables.data.mappers.*
+import com.example.drinkables.data.repositories.DrinksRatingRepository
 import com.example.drinkables.data.repositories.DrinksRepository
 import com.example.drinkables.data.repositories.DrinksRepositoryImpl
 import com.example.drinkables.data.repositories.FavouriteDrinksRepository
@@ -25,6 +27,11 @@ abstract class AppBindModule {
     abstract fun bindFavouriteDrinkRepository(
         drinksRepository: DrinksRepositoryImpl,
     ): FavouriteDrinksRepository
+
+    @Binds
+    abstract fun bindDrinksRatingRepository(
+        drinksRepository: DrinksRepositoryImpl,
+    ): DrinksRatingRepository
 
     @Binds
     abstract fun bindDrinkViewEntityMapper(
@@ -55,4 +62,14 @@ abstract class AppBindModule {
     abstract fun bindBoilVolumeResponseToBoilVolumeMapper(
         boilVolumeResponseToBoilVolumeMapper: BoilVolumeResponseToBoilVolumeMapper
     ): EntityMapper<BoilVolumeResponse, BoilVolume>
+
+    @Binds
+    abstract fun bindDrinkToDrinkRatingMapper(
+        drinkToDrinkRatingMapper: DrinkToDrinkRatingMapper
+    ): EntityMapper<PropertyModel.PropertyRatingModel, DrinksRatingEntity>
+
+    @Binds
+    abstract fun bindDrinkRatingEntityToPropertyRatingModelMapper(
+        propertyRatingModelMapper: DrinkRatingEntityToPropertyRatingModelMapper
+    ): EntityMapper<DrinksRatingEntity, PropertyModel.PropertyRatingModel>
 }

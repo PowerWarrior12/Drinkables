@@ -20,15 +20,15 @@ class DrinkToDrinkPropertyValuesMapper @Inject constructor(private val context: 
                 PropertyModel.PropertyTitleModel(context.getString(R.string.attenuation_level_label)),
                 PropertyModel.PropertyValueModel(attenuationLevel.toString()),
                 PropertyModel.PropertyTitleModel(context.getString(R.string.ebc_label)),
-                PropertyModel.PropertyValueModel(ebc.toString()),
+                PropertyModel.PropertyValueIndicatorModel(ebc, 100f),
                 PropertyModel.PropertyTitleModel(context.getString(R.string.food_pairing_label)),
                 PropertyModel.PropertyValueModel(foodPairingText),
                 PropertyModel.PropertyTitleModel(context.getString(R.string.ibu_label)),
-                PropertyModel.PropertyValueModel(ibu.toString()),
+                PropertyModel.PropertyValueIndicatorModel(ibu, 120f),
                 PropertyModel.PropertyTitleModel(context.getString(R.string.ph_label)),
-                PropertyModel.PropertyValueModel(ph.toString()),
+                PropertyModel.PropertyValueIndicatorModel(ph, 20f),
                 PropertyModel.PropertyTitleModel(context.getString(R.string.srm_label)),
-                PropertyModel.PropertyValueModel(srm.toString()),
+                PropertyModel.PropertyValueIndicatorModel(srm, 40f),
             )
         }
     }

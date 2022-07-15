@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="customView">
+        <attr name="view_icon" format="reference"/>
+        <attr name="default_color" format="color"/>
+        <attr name="selected_color" format="color"/>
+        <attr name="text_color" format="color"/>
+        <attr name="value" format="integer"/>
+        <attr name="item_size" format="dimension"/>
+        <attr name="text_width" format="dimension"/>
+        <attr name="items_indent" format="dimension"/>
+        <attr name="items_count" format="integer"/>
+        <attr name="indicator_value" format="float"/>
+        <attr name="max_value" format="float"/>
+        <attr name="fill_color" format="color"/>
+    </declare-styleable>
+</resources>

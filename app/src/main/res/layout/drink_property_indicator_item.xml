@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.drinkables.utils.views.customViews.IndicatorView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:indicator_value="50.0"
+    app:text_width="15sp"
+    app:text_color="@color/white"
+    app:fill_color="@color/yellow"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="32dp">
+
+</com.example.drinkables.utils.views.customViews.IndicatorView>
