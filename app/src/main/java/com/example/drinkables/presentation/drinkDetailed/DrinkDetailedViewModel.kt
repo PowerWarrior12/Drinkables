@@ -3,6 +3,9 @@ package com.example.drinkables.presentation.drinkDetailed
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.drinkables.data.mappers.EntityMapper
+import com.example.drinkables.data.repositories.DrinksRatingRemoteRepository
+import com.example.drinkables.data.repositories.DrinksRatingRepository
+import com.example.drinkables.data.repositories.UserLocalRepository
 import com.example.drinkables.domain.common.Result
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.entities.PropertyModel
@@ -25,6 +28,9 @@ class DrinkDetailedViewModel(
     private val loadDrinkRatingInteractor: LoadDrinkRatingInteractor,
     private val addOrUpdateRatingInteractor: AddOrUpdateRatingInteractor,
     private val drinkToDrinkPropertyValuesMapper: EntityMapper<Drink, List<PropertyModel>>,
+    private val userLocalRepository: UserLocalRepository,
+    private val drinksRatingRemoteRepository: DrinksRatingRemoteRepository,
+    private val drinksRatingRepository: DrinksRatingRepository,
     private val router: DialogRouter,
     private val drinkId: Int,
 ) : ViewModel() {
@@ -33,16 +39,21 @@ class DrinkDetailedViewModel(
     private val mutableDrinkPropertiesLiveData = MutableLiveData<MutableList<PropertyModel>>()
     private val mutableLoadDrinkLiveData = MutableLiveData<Boolean>(false)
     private val mutableFatalErrorDrinkLiveData = MutableLiveData<Boolean>(false)
+    private val mutableUserNameLiveData = MutableLiveData<String?>(null)
 
     val drinkDetailedLiveData: LiveData<Drink> = mutableDrinkDetailedLiveData
     val drinkPropertiesLiveData: LiveData<MutableList<PropertyModel>> = mutableDrinkPropertiesLiveData
     val loadDrinkLiveData: LiveData<Boolean> = mutableLoadDrinkLiveData
     val fatalErrorDrinkLiveData: LiveData<Boolean> = mutableFatalErrorDrinkLiveData
+    val userNameLiveData: LiveData<String?> = mutableUserNameLiveData
 
     var isFavouriteChanged: Boolean = false
         private set
 
     init {
+        viewModelScope.launch {
+            mutableUserNameLiveData.postValue(userLocalRepository.getUserName())
+        }
         getDrinkDetailed()
     }
 
@@ -100,8 +111,19 @@ class DrinkDetailedViewModel(
                 val ratingPropertyIndex = drinkPropertiesLiveData.value?.indexOf(ratingProperty)
                 ratingPropertyIndex?.let {
                     drinkPropertiesLiveData.value?.set(ratingPropertyIndex, ratingProperty.copy(value = rating))
-                    addOrUpdateRatingInteractor.run(drinkPropertiesLiveData.value?.get(it) as PropertyModel.PropertyRatingModel)
+                    val ratingPropertyResult =
+                        drinkPropertiesLiveData.value?.get(it) as PropertyModel.PropertyRatingModel
+                    addOrUpdateRatingInteractor.run(ratingPropertyResult)
+                    addOrUpdateRatingRemote(ratingPropertyResult)
                 }
+            }
+        }
+    }
+
+    private fun addOrUpdateRatingRemote(ratingProperty: PropertyModel.PropertyRatingModel) {
+        viewModelScope.launch {
+            userNameLiveData.value?.let {
+                drinksRatingRemoteRepository.addOrUpdateRating(ratingProperty, it)
             }
         }
     }
@@ -111,7 +133,19 @@ class DrinkDetailedViewModel(
         val drinkRating = PropertyModel.PropertyRatingModel(drink.id, DEFAULT_RATING)
         properties.add(drinkRating)
         mutableDrinkPropertiesLiveData.postValue(properties)
+        loadUsersRatings(drink.id)
         loadDrinksRating(drink)
+    }
+
+    private suspend fun loadUsersRatings(drinkId: Int) {
+        val result = drinksRatingRepository.loadAllRatingsByDrink(drinkId)
+        if (result is Result.Success) {
+            drinkPropertiesLiveData.value?.addAll(result.data)
+        } else if (result is Result.Error){
+            val errorMessage = result.exception.message.toString()
+            router.showDialog(Screens.errorDialogFragment(errorMessage))
+            Log.d(TAG, errorMessage)
+        }
     }
 
     private suspend fun loadDrinksRating(drink: Drink) {
@@ -139,6 +173,9 @@ class DrinkDetailedViewModel(
         private val drinkToDrinkPropertyValuesMapper: EntityMapper<Drink, List<PropertyModel>>,
         private val loadDrinkRatingInteractor: LoadDrinkRatingInteractor,
         private val addOrUpdateRatingInteractor: AddOrUpdateRatingInteractor,
+        private val userLocalRepository: UserLocalRepository,
+        private val drinksRatingRemoteRepository: DrinksRatingRemoteRepository,
+        private val drinksRatingRepository: DrinksRatingRepository,
         private val router: DialogRouter,
         @Assisted private val drinkId: Int,
     ) :
@@ -151,6 +188,9 @@ class DrinkDetailedViewModel(
                 loadDrinkRatingInteractor,
                 addOrUpdateRatingInteractor,
                 drinkToDrinkPropertyValuesMapper,
+                userLocalRepository,
+                drinksRatingRemoteRepository,
+                drinksRatingRepository,
                 router,
                 drinkId
             ) as T

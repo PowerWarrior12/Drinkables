@@ -70,6 +70,8 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     private val statusPorterDuffMode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
 
+    private var isItemClickable: Boolean = true
+
     //endregion
 
     init {
@@ -116,11 +118,16 @@ class RatingView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         event ?: return false
-        return handleClick(event)
+        return if (isItemClickable) handleClick(event)
+        else false
     }
 
     fun addOnItemClickListener(callback: OnItemClickListener) {
         onItemClickListener = callback
+    }
+
+    fun setItemClickable(clickable: Boolean) {
+        isItemClickable = clickable
     }
 
     //endregion

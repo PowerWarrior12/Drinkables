@@ -18,6 +18,7 @@ import com.example.drinkables.R
 import com.example.drinkables.databinding.FragmentDrinksListBinding
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.presentation.DrinksApplication
+import com.example.drinkables.presentation.createUser.CreateUserDialog
 import com.example.drinkables.presentation.mainActivity.MainActivity
 import com.example.drinkables.utils.views.setState
 import kotlinx.coroutines.flow.Flow
@@ -104,6 +105,13 @@ class DrinksListFragment : Fragment(R.layout.fragment_drinks_list) {
                 return false
             }
         })
+
+        binding.mainToolbar.userButton.setOnClickListener {
+            childFragmentManager.beginTransaction()
+                .add(CreateUserDialog(), "")
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     private fun observeData() {

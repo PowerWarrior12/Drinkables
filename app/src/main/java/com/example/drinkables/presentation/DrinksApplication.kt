@@ -1,8 +1,10 @@
 package com.example.drinkables.presentation
 
 import android.app.Application
+import com.example.drinkables.data.repositories.DrinksRatingRemoteRepositoryImpl
 import com.example.drinkables.presentation.di.AppComponent
 import com.example.drinkables.presentation.di.DaggerAppComponent
+import com.google.firebase.FirebaseApp
 
 class DrinksApplication : Application() {
 

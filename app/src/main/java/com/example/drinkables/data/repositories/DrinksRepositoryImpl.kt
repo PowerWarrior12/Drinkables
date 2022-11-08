@@ -1,6 +1,5 @@
 package com.example.drinkables.data.repositories
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -11,6 +10,7 @@ import com.example.drinkables.data.api.entities.DrinksResponse
 import com.example.drinkables.data.bd.DrinkDB
 import com.example.drinkables.data.bd.DrinkEntity
 import com.example.drinkables.data.bd.DrinksRatingEntity
+import com.example.drinkables.data.bd.UserDrinkRatingEntity
 import com.example.drinkables.data.mappers.EntityMapper
 import com.example.drinkables.domain.common.Result
 import com.example.drinkables.domain.entities.Drink
@@ -33,6 +33,8 @@ class DrinksRepositoryImpl @Inject constructor(
     private val drinkEntityToDrinkMapper: EntityMapper<DrinkEntity, Drink>,
     private val drinkToDrinkRatingMapper: EntityMapper<PropertyModel.PropertyRatingModel, DrinksRatingEntity>,
     private val drinkRatingEntityToPropertyRatingModelMapper: EntityMapper<DrinksRatingEntity, PropertyModel.PropertyRatingModel>,
+    private val userDrinkRatingEntityToPropertyUserRatingModel: EntityMapper<UserDrinkRatingEntity, PropertyModel.PropertyUserRatingModel>,
+    private val propertyUserRatingModelToUserDrinkEntity: EntityMapper<PropertyModel.PropertyUserRatingModel, UserDrinkRatingEntity>,
     private val drinkDB: DrinkDB
 ) : DrinksRepository, FavouriteDrinksRepository, DrinksRatingRepository {
     override suspend fun loadDrinkDetailed(id: Int): Result<Drink> {
@@ -122,6 +124,33 @@ class DrinksRepositoryImpl @Inject constructor(
                 Result.Success(drinkRatingEntityToPropertyRatingModelMapper.mapEntity(drinkRatingEntity))
             }
         }
+    }
+
+    override suspend fun loadAllRatingsByDrink(drinkId: Int): Result<List<PropertyModel.PropertyUserRatingModel>> {
+        return try {
+            Result.Success(drinkDB.drinkDao().getAllDrinkRatingsByDrink(drinkId).map { rating ->
+                userDrinkRatingEntityToPropertyUserRatingModel.mapEntity(rating)
+            })
+        } catch (exception: Exception) {
+            Result.Error(exception)
+        }
+    }
+
+    override suspend fun loadAllRatingsByUser(user: String): Result<List<PropertyModel.PropertyUserRatingModel>> {
+        return try {
+            Result.Success(drinkDB.drinkDao().getAllDrinkRatingsByUser(user).map { rating ->
+                userDrinkRatingEntityToPropertyUserRatingModel.mapEntity(rating)
+            })
+        } catch (exception: Exception) {
+            Result.Error(exception)
+        }
+    }
+
+    override suspend fun updateUsersRatings(drinkRating: List<PropertyModel.PropertyUserRatingModel>) {
+        drinkDB.drinkDao().deleteAllUsersRatingTable()
+        drinkDB.drinkDao().addUsersDrinkRatings(drinkRating.map {
+            propertyUserRatingModelToUserDrinkEntity.mapEntity(it)
+        })
     }
 
     override suspend fun addDrinkRating(drinkRating: PropertyModel.PropertyRatingModel) {

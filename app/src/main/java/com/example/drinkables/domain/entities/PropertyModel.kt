@@ -10,12 +10,17 @@ sealed class PropertyModel {
     ) : PropertyModel()
 
     data class PropertyRatingModel(
-        val id: Int,
-        val value: Int
+        val id: Int = 0,
+        val value: Int = 0
     ) : PropertyModel()
 
     data class PropertyValueIndicatorModel(
         val value: Float,
         val maxValue: Float
+    ) : PropertyModel()
+
+    data class PropertyUserRatingModel(
+        val userName: String,
+        val rating: PropertyRatingModel
     ) : PropertyModel()
 }

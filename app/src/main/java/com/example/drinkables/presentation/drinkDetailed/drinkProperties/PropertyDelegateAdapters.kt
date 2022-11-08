@@ -1,9 +1,7 @@
 package com.example.drinkables.presentation.drinkDetailed.drinkProperties
 
-import com.example.drinkables.databinding.DrinkPropertyIndicatorItemBinding
-import com.example.drinkables.databinding.DrinkPropertyItemBinding
-import com.example.drinkables.databinding.DrinkPropertyRatingItemBinding
-import com.example.drinkables.databinding.DrinkPropertyTitleItemBinding
+import android.annotation.SuppressLint
+import com.example.drinkables.databinding.*
 import com.example.drinkables.domain.entities.PropertyModel
 import com.example.drinkables.utils.views.customViews.RatingView
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
@@ -26,11 +24,14 @@ fun propertyTitleAdapterDelegate() =
         }
     }
 
-fun propertyRatingAdapterDelegate(callback: RatingView.OnItemClickListener) =
+fun propertyRatingAdapterDelegate(callback: RatingView.OnItemClickListener, prepareCallback: (action: (String?) -> Unit) -> Unit) =
     adapterDelegateViewBinding<PropertyModel.PropertyRatingModel, PropertyModel, DrinkPropertyRatingItemBinding>(
         { layoutInflater, root -> DrinkPropertyRatingItemBinding.inflate(layoutInflater, root, false) }
     ) {
         binding.root.addOnItemClickListener(callback)
+        prepareCallback {
+            binding.root.setItemClickable(it != null)
+        }
         bind {
             binding.root.value = item.value
         }
@@ -43,5 +44,16 @@ fun propertyIndicatorAdapterDelegate() =
         bind {
             binding.root.value = item.value
             binding.root.maxValue = item.maxValue
+        }
+    }
+
+@SuppressLint("SetTextI18n")
+fun propertyUserRatingAdapterDelegate() =
+    adapterDelegateViewBinding<PropertyModel.PropertyUserRatingModel, PropertyModel, DrinkPropertyUserRatingItemBinding>(
+        { layoutInflater, root -> DrinkPropertyUserRatingItemBinding.inflate(layoutInflater, root, false) }
+    ) {
+        bind {
+            binding.nameText.text = item.userName
+            binding.valueText.text = "${item.rating.value}.0"
         }
     }

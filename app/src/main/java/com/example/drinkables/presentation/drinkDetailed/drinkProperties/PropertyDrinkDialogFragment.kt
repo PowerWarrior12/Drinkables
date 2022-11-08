@@ -35,15 +35,15 @@ class PropertyDrinkDialogFragment : BottomSheetDialogFragment() {
     private val propertyDrinkViewModel by viewModels<DrinkDetailedViewModel> {
         propertyViewModelFactory.create(drink.id)
     }
-    private val propertiesAdapter = AsyncListDifferDelegationAdapter<PropertyModel>(
-        PropertyModelDiffCallback,
-        propertyAdapterDelegate(),
-        propertyTitleAdapterDelegate(),
-        propertyRatingAdapterDelegate { rating ->
-            propertyDrinkViewModel.onRatingChanged(rating)
-        },
-        propertyIndicatorAdapterDelegate()
-    )
+    private val propertiesAdapter = PropertyAdapter({ rating ->
+        propertyDrinkViewModel.onRatingChanged(rating)
+    }, ::observeUser)
+
+    private fun observeUser(action: (String?) -> Unit) {
+        propertyDrinkViewModel.userNameLiveData.observe(viewLifecycleOwner) {
+            action(it)
+        }
+    }
 
     override fun onAttach(context: Context) {
         DrinksApplication.INSTANCE.appComponent.inject(this)

@@ -5,16 +5,16 @@ import com.example.drinkables.data.api.entities.DrinkResponse
 import com.example.drinkables.data.api.entities.DrinksResponse
 import com.example.drinkables.data.bd.DrinkEntity
 import com.example.drinkables.data.bd.DrinksRatingEntity
+import com.example.drinkables.data.bd.UserDrinkRatingEntity
 import com.example.drinkables.data.mappers.*
-import com.example.drinkables.data.repositories.DrinksRatingRepository
-import com.example.drinkables.data.repositories.DrinksRepository
-import com.example.drinkables.data.repositories.DrinksRepositoryImpl
-import com.example.drinkables.data.repositories.FavouriteDrinksRepository
+import com.example.drinkables.data.repositories.*
 import com.example.drinkables.domain.entities.BoilVolume
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.entities.PropertyModel
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
+import java.sql.Time
 
 @Module
 abstract class AppBindModule {
@@ -32,6 +32,16 @@ abstract class AppBindModule {
     abstract fun bindDrinksRatingRepository(
         drinksRepository: DrinksRepositoryImpl,
     ): DrinksRatingRepository
+
+    @Binds
+    abstract fun bindDrinksRatingRemoteRepository(
+        drinksRepository: DrinksRatingRemoteRepositoryImpl,
+    ): DrinksRatingRemoteRepository
+
+    @Binds
+    abstract fun bindUserLocalRepository(
+        userLocalRepository: UserLocalRepositoryImpl,
+    ): UserLocalRepository
 
     @Binds
     abstract fun bindDrinkViewEntityMapper(
@@ -72,4 +82,14 @@ abstract class AppBindModule {
     abstract fun bindDrinkRatingEntityToPropertyRatingModelMapper(
         propertyRatingModelMapper: DrinkRatingEntityToPropertyRatingModelMapper
     ): EntityMapper<DrinksRatingEntity, PropertyModel.PropertyRatingModel>
+
+    @Binds
+    abstract fun bindUserDrinkRatingEntityToPropertyUserRatingModelMapper(
+        propertyRatingModelMapper: UserDrinkRatingToPropertyRatingModel
+    ): EntityMapper<UserDrinkRatingEntity, PropertyModel.PropertyUserRatingModel>
+
+    @Binds
+    abstract fun bindPropertyUserRatingModelMapperToUserDrinkRatingEntityMapper(
+        propertyRatingModelMapper: PropertyUserRatingModelToUserDrinkEntity
+    ): EntityMapper<PropertyModel.PropertyUserRatingModel, UserDrinkRatingEntity>
 }

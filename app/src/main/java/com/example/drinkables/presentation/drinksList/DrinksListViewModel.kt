@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.domain.interactors.ChangeFavouriteDrinkInteractor
+import com.example.drinkables.domain.interactors.CreateOrUpdateUserInteractor
 import com.example.drinkables.domain.interactors.LoadPagingDrinksInteractor
 import com.example.drinkables.presentation.navigation.Screens
 import com.github.terrakok.cicerone.Router

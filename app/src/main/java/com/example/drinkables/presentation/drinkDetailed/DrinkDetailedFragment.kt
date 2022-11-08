@@ -53,9 +53,9 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
         BottomSheetBehavior.from(binding.bottomSheetProperties.root)
     }
 
-    private val propertiesAdapter = PropertyAdapter { rating ->
+    private val propertiesAdapter = PropertyAdapter ({ rating ->
         drinkViewModel.onRatingChanged(rating)
-    }
+    }, ::observeUser)
 
     @Inject
     lateinit var drinkDetailedViewModelFactory: DrinkDetailedViewModel.DrinkDetailedViewModelFactory.Factory
@@ -159,6 +159,12 @@ class DrinkDetailedFragment : Fragment(R.layout.fragment_drink_detailed) {
             viewLifecycleOwner,
             this.propertiesAdapter::setItems
         )
+    }
+
+    private fun observeUser(action: (String?) -> Unit) {
+        drinkViewModel.userNameLiveData.observe(viewLifecycleOwner) {
+            action(it)
+        }
     }
 
     private fun fillDrinkData(drink: Drink) {

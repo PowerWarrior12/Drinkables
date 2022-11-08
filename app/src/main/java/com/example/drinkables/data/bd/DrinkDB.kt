@@ -7,9 +7,9 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-const val DB_VERSION = 2
+const val DB_VERSION = 1
 
-@Database(entities = [DrinkEntity::class, DrinksRatingEntity::class], version = DB_VERSION)
+@Database(entities = [DrinkEntity::class, DrinksRatingEntity::class, UserDrinkRatingEntity::class], version = DB_VERSION)
 abstract class DrinkDB : RoomDatabase() {
 
     abstract fun drinkDao(): DrinkDao
@@ -22,19 +22,7 @@ abstract class DrinkDB : RoomDatabase() {
                     DrinkDB::class.java,
                     DrinkDB::class.java.simpleName
                 )
-                    .addMigrations(MIGRATION_1_2)
                     .build()
-            }
-        }
-
-        private val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL(
-                    "CREATE TABLE 'drink_rating' (" +
-                            "'id' INT(10) NOT NULL," +
-                            "'rating' INT(2) NOT NULL," +
-                            "PRIMARY KEY ('id'));"
-                )
             }
         }
     }

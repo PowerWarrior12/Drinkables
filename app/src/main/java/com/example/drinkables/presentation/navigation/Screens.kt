@@ -2,6 +2,7 @@ package com.example.drinkables.presentation.navigation
 
 import com.example.drinkables.domain.entities.Drink
 import com.example.drinkables.presentation.ErrorDialogFragment
+import com.example.drinkables.presentation.createUser.CreateUserDialog
 import com.example.drinkables.presentation.drinkDetailed.DrinkDetailedFragment
 import com.example.drinkables.presentation.drinkDetailed.drinkProperties.PropertyDrinkDialogFragment
 import com.example.drinkables.presentation.drinksFavorite.FavouritesListFragment
@@ -27,5 +28,9 @@ object Screens {
 
     fun errorDialogFragment(message: String) = DialogScreen {
         ErrorDialogFragment(message)
+    }
+
+    fun createUserDialogFragment() = DialogScreen {
+        CreateUserDialog.newInstance()
     }
 }
