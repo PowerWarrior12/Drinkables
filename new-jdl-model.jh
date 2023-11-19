@@ -1,0 +1,17 @@
+application {
+  config {
+    baseName jhipster
+    applicationType monolith
+  }
+}
+
+entity A {
+  name String required
+}
+entity B {name String required}
+entity C {name String required}
+dto A, B with mapstruct
+paginate A, C with infinite-scroll
+paginate B with pager
+service A with serviceClass
+service C with serviceImpl
